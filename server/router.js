@@ -1,0 +1,321 @@
+const express = require('express')
+const url = require('url');
+const path = require('path')
+const router = express.Router();
+const nodemailer = require('nodemailer')
+const fs = require('fs')
+const formidable = require('formidable')
+const model = require('./data.js')
+const mongoose = require('mongoose')
+mongoose.set('useFindAndModify', false)
+const jwt = require('jsonwebtoken')
+const util = require('./util')
+const CodeExpiredTime = 60 //验证码过期时间
+    /*
+        code:
+            501:登录过期
+    */
+var respones = function(type, value, message) {
+    let obj = {
+        success: type,
+        value: value,
+        message: message,
+        code: type ? 200 : 500
+    }
+    return obj
+}
+router.all('*', async(req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Methods', '*');
+    res.header('Content-Type', 'application/json;charset=utf-8');
+    let url = ['/centerFile', '/comment']
+    if (url.includes(req.originalUrl)) {
+        let isverify = await verify({ token: req.headers.token, ssk: req.body.email })
+        console.log(isverify)
+        if (isverify) {
+            let data = respones(false, {}, 'token过期，请重新登录')
+            data.code = 501
+            res.send(data)
+        } else {
+            next();
+        }
+    } else {
+        next();
+
+    }
+});
+router.get('*', function(req, res) { // 对所有get请求处理
+    var pathname = __dirname + url.parse(req.url).pathname;
+
+    if (path.extname(pathname) == "") {
+        pathname += "/";
+    }
+    if (pathname.charAt(pathname.length - 1) == "/") {
+        pathname += "index.html";
+    }
+    var arrayAll = [".html", ".js", ".css", ".gif", ".jpg", ".png", ".mp3", '.txt'];
+    var str = '';
+    if (req.params[0].indexOf('.') > 0) {
+        var n = req.params[0].indexOf('.')
+        str = req.params[0].slice(n, req.params[0].length)
+    }
+    if (arrayAll.includes(str)) { //  解决中文URL乱码问题
+        pathname = __dirname + req.params[0];
+    }
+    fs.exists(pathname, function(exists) {
+        if (exists) {
+            // 'Content-Disposition': 'attachment'  资源下载表示
+            switch (path.extname(pathname)) {
+                case ".html":
+                    res.writeHead(200, { "Content-Type": "text/html" });
+                    break;
+                case ".js":
+                    res.writeHead(200, { "Content-Type": "text/javascript", 'Content-Disposition': 'attachment' });
+                    break;
+                case ".css":
+                    res.writeHead(200, { "Content-Type": "text/css" });
+                    break;
+                case ".gif":
+                    res.writeHead(200, { "Content-Type": "image/gif" });
+                    break;
+                case ".jpg":
+                    res.writeHead(200, { "Content-Type": "image/jpeg", 'Content-Disposition': 'attachment' });
+                    break;
+                case ".png":
+                    res.writeHead(200, { "Content-Type": "image/png" });
+                    break;
+                case ".mp3":
+                    res.writeHead(200, { "Content-Type": "audio/wav" });
+                    break;
+
+                default:
+                    res.writeHead(200, { "Content-Type": "application/octet-stream" });
+            }
+
+            fs.readFile(pathname, function(err, data) {
+
+                res.end(data);
+            });
+        } else {
+            res.writeHead(404, { "Content-Type": "text/html" });
+            res.end("<h1>404 Not Found</h1>");
+        }
+    });
+})
+router.post('/sendEmail', (req, res) => {
+    console.log(req.body)
+        // 这里的req.body能够使用就在index.js中引入了const bodyParser = require('body-parser')
+    var transporter = nodemailer.createTransport({
+        host: 'smtp.163.com',
+        port: 465,
+        secureConnection: true,
+        // 我们需要登录到网页邮箱中，然后配置SMTP和POP3服务器的密码
+        auth: {
+            user: '18210029478@163.com',
+            pass: 'jack123'
+        }
+    });
+    var response = {}
+    var code = ''
+    for (var i = 0; i < 5; i++) {
+        code += Math.floor(Math.random() * 10).toString()
+    }
+    var sendHtml = `<h1>您的验证码为</h1> ${code}` //邮箱内容
+    var mailOptions = {
+        // 发送邮件的地址
+        from: '"sunjian" <18210029478@163.com>', // login user must equal to this user
+        // 接收邮件的地址
+        to: req.body.email, // xrj0830@gmail.com
+        // 邮件主题
+        subject: "欢迎注册sunjian的博客",
+        // 以HTML的格式显示，这样可以显示图片、链接、字体颜色等信息
+        html: sendHtml
+    };
+    let sendEmail = new mongoose.model('sendEmail')
+    sendEmail.find({ email: req.body.email }, (err, row) => {
+        if (err) return handleError(err);
+        if (row.length === 0) {
+            let saveEmail = new sendEmail({ time: new Date(), testNum: code, email: req.body.email })
+            saveEmail.save((e, doc) => {
+                if (e) return handleError(e);
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        return console.log(error);
+                    } else {
+                        response = respones(true, code, '验证码已发送值邮箱，请查看')
+                        res.send(response)
+                    }
+                });
+            })
+        } else {
+            sendEmail.update({ email: req.body.email }, { time: new Date(), testNum: code }, (err, raw) => {
+                console.log(err, raw)
+                if (err) return handleError(err);
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        return console.log(error);
+                    } else {
+                        response = respones(true, code, '验证码已发送值邮箱，请查看')
+                        res.send(response)
+                    }
+
+                });
+            })
+        }
+    })
+
+})
+var verify = async function(data) {
+    let res
+    await jwt.verify(data.token, data.ssk, function(err, decoded) {
+        res = err ? true : false
+    });
+    return res
+}
+router.post('/queryIndexList', async(req, res) => {
+    let centerFile = new mongoose.model('centerFile')
+        //0查询返回自定字段，1不返回改字段
+    centerFile.find({}, { title: 1, createTime: 1, titleImage: 1, content: 1, }, (ress, doc) => {
+        let data = respones(true, { doc }, '')
+        res.send(data)
+    })
+})
+router.post('/singIn', async(req, res) => {
+    let body = req.body
+    let responesObj = {}
+    let sendEmail = mongoose.model('sendEmail');
+    let emailObj = []
+    emailObj = await util.find({ model: sendEmail, data: { email: body.email }, })
+    if (emailObj.length === 0 || emailObj[0].email !== body.email) {
+        responesObj = respones(false, emailObj, '验证码错误')
+        res.send({ data: responesObj })
+        return
+    }
+    let userModel = mongoose.model('user');
+    let queryList = []
+    queryList = await util.find({ model: userModel, data: { email: body.email }, })
+    if (queryList.length > 0) {
+        responesObj = respones(true, '', '该邮箱已注册')
+    } else {
+        let ssk = body.email
+            // let ssk=fs.readFileSync('./privkey.pem')
+        var token = jwt.sign({ foo: 'bar', exp: Math.floor(Date.now() / 1000) + (60 * 60), }, ssk);
+        let user = new userModel({
+            password: body.password, //密码
+            createTime: new Date(), //创建时间
+            sessionToken: token, //token
+            email: body.email, //email
+        })
+        let saveErr = await user.save()
+
+        responesObj.type = true,
+            responesObj.message = '注册成功'
+    }
+    res.send({ data: responesObj })
+
+})
+router.post('/login', async(req, res) => {
+    let body = req.body
+    let data
+    let user = new mongoose.model('user')
+    let params = { email: body.email, password: body.password }
+    let userObj = await util.find({ model: user, data: params })
+    if (userObj.length === 0) {
+        data = respones(false, '', '邮箱或密码错误')
+    } else if (userObj[0].isDelete) {
+        data = respones(false, '', '该账户已经注销')
+    } else {
+        let ssk = body.email
+        var token = jwt.sign({ foo: 'bar', exp: Math.floor(Date.now() / 1000) + (60 * 60), }, ssk);
+        await user.update({ params, sessionToken: token }, (err) => {
+            if (err) return handleError(err)
+            else {
+                data = respones(true, { token: token }, '登录成功')
+            }
+        })
+    }
+    res.send(data)
+})
+router.post('/centerFile', async(req, res) => {
+    let body = req.body;
+    let data
+    let obj = {
+            title: body.title, //标题
+            createTime: new Date(), //创建时间
+            content: body.content, //内容
+            email: body.email,
+            titleImage: body.titleImage,
+        }
+        // let isverify = verify({ token: req.headers.token, ssk: body.email })
+        // data = respones(false, {}, 'token过期，请重新登录')
+        // if (isverify) {
+        //     res.send(data)
+        //     return
+        // }
+
+    let centerFile = new mongoose.model('centerFile')
+    let saveCenterFile = new centerFile(obj)
+    saveCenterFile.save((err, doc) => {
+        if (err) return handleError(e);
+
+        data = respones(true, {}, '保存成功')
+        res.send(data)
+    })
+})
+router.post('/img', (req, res) => {
+    const form = new formidable.IncomingForm()
+    form.encoding = 'utf-8';
+    form.uploadDir = path.join(__dirname + "/img");
+    form.keepExtensions = true; //保留后缀
+    form.maxFieldsSize = 2 * 1024 * 1024;
+    // form.uploadDir = "./uploads";
+    form.parse(req, function(err, frelds, files) {
+        console.log(files)
+        var filename = files.image.name
+        var nameArray = filename.split('.');
+        var type = nameArray[nameArray.length - 1];
+        var name = '';
+        for (var i = 0; i < nameArray.length - 1; i++) {
+            name = name + nameArray[i];
+        }
+        var date = new Date();
+        var time = '_' + date.getFullYear() + "_" + (date.getMonth() + 1) + "_" + date.getDate() + "_" + date.getHours() + "_" + date.getMinutes();
+        var avatarName = name + 'time_' + time + '.' + type;
+        var newPath = form.uploadDir + "\\" + avatarName;
+        fs.renameSync(files.image.path, newPath); //重命名
+        res.send({ data: "/img/" + avatarName, success: true })
+    })
+})
+router.post('/queryDetail', async(req, res) => {
+    let centerFile = new mongoose.model('centerFile')
+    centerFile.findById(req.body.id, (err, doc) => {
+        if (err) return handleError(err);
+        let data = respones(true, { doc }, '')
+        res.send(data)
+    })
+})
+router.post('/comment', async(req, res) => {
+    let centerFile = new mongoose.model('comment')
+    let obj = {
+        time: new Date()
+    }
+    obj = Object.assign(obj, req.body)
+    console.log(obj, req.body)
+    let save = new centerFile(obj)
+    save.save((err) => {
+        if (err) return handleError(err);
+        let data = respones(true, {}, '成功')
+        res.send(data)
+    })
+})
+router.post('/queryComment', (req, res) => {
+    let centerFile = new mongoose.model('comment')
+    centerFile.find({ id: req.body.id }, (err, doc) => {
+        if (err) return handleError(err);
+        let data = respones(true, { doc }, '成功')
+        res.send(data)
+    })
+})
+module.exports = router;
