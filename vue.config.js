@@ -13,7 +13,7 @@ module.exports = {
         hotOnly: false,
         proxy: {
             '/api': {
-                target: 'http://localhost:3000', //对应自己的接口
+                target: 'http://10.120.1.171:3000', //对应自己的接口
                 changeOrigin: true,
                 ws: true,
                 pathRewrite: {
@@ -21,12 +21,12 @@ module.exports = {
                 }
             },
             '/socket': {
-                target: 'http://localhost:9000', // target host
+                target: 'http://10.120.1.171:9000', // target host
                 changeOrigin: true, // needed for virtual hosted sites
                 ws: false,
             },
             '/sockjs-node': {
-                target: 'http://localhost:9000', // target host
+                target: 'http://10.120.1.171:9000', // target host
                 changeOrigin: true, // needed for virtual hosted sites
                 ws: false,
             }

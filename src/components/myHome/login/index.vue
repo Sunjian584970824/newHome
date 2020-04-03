@@ -1,6 +1,6 @@
 <template>
 <div id="login">
-    <div class='isSmallScreen' v-if="!isSmallScreen">
+    <div class='isSmallScreen' v-if="isSmallScreen">
         <div class="header ">
             <i class="el-icon-arrow-left" @click="$goback"></i>
             <div class='titleBox'>{{isSingIn?'登录':'注册'}}</div>
@@ -59,6 +59,59 @@
             <div style='flex:1'></div>
         </div>
     </div>
+    <div v-else class='bigScrenn'>
+        <div class="fle1"></div>
+        <div class="centerBoxs">
+            <div class="box1"></div>
+            <div class="flex1">
+                <div class='loginCenterBox'>
+                    <div class='fat'>
+                        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" label-position='right' class="demo-form-inline">
+                            <el-form-item label="">
+                                <div class='titleBox'>{{isSingIn?'登录':'注册'}}</div>
+                            </el-form-item>
+                            <el-form-item label="用户名" prop="userName" v-if='!isSingIn'>
+                                <el-input v-model="ruleForm.userName" placeholder="请输入用户名"></el-input>
+                            </el-form-item>
+                            <el-form-item label="邮箱" prop="email">
+                                <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
+                            </el-form-item>
+                            <el-form-item label="验证码" v-if='!isSingIn' prop="code">
+                                <el-input v-model="ruleForm.code" placeholder="请输入验证码">
+                                    <el-button slot="append" :disabled="disabledBtn" @click.native="getRuleCode">{{timeString}}</el-button>
+
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item label="密码" prop="password">
+                                <el-input v-model="ruleForm.password" :type='passwordText' placeholder="请输入密码">
+                                    <img class='rightIconLg myIcon ' slot="suffix" @click="seePwd('passwordText')" :src="passwordText==='text'?require('../../../assets/image/pwd_on.svg'):require('../../../assets/image/pwd_off.svg')" />
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item label="确认密码" prop="passwordAgin">
+                                <el-input v-model="ruleForm.passwordAgin" :type='passwordAginText' placeholder="请确认密码">
+                                    <img class='rightIconLg myIcon ' slot="suffix" @click="seePwd('passwordAginText')" :src="passwordAginText==='text'?require('../../../assets/image/pwd_on.svg'):require('../../../assets/image/pwd_off.svg')" />
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button class='loginMethodsLarge' @click="loginMethod">{{isSingIn?'登录':'注册'}}</el-button>
+                            </el-form-item>
+
+                            <div class='singIn' v-if='!isSingIn' @click="changeLogin(true)">
+                                <div style="display:flex">
+                                    <div @click='isEmai=true'>邮箱登录</div>
+                                    <div @click='isEmai=false'>密码登陆</div>
+                                </div>
+
+                            </div>
+                         <div style="text-align:left;width:100%" @click="changeLogin(false)">没有账号？快去注册吧</div>
+                        </el-form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="fle1"></div>
+    </div>
 </div>
 </template>
 
@@ -88,7 +141,7 @@ export default {
             timeString: '获取验证码',
             isSingIn: true, //判断是否登录
             isEmail: true, //邮箱或者用户名登陆
-            disabledBtn:false,//验证码按钮禁点
+            disabledBtn: false, //验证码按钮禁点
             ruleForm: {
                 email: '584970824@qq.com',
                 code: '', //验证码
@@ -106,26 +159,28 @@ export default {
                 code: {
                     required: true,
                     message: '请输入验证码',
-                    trigger: 'blur,change'
+                    trigger: ['blur', 'change']
                 },
                 userName: {
                     required: true,
                     message: '请输入用户名',
-                    trigger: 'blur,change'
+                    trigger: ['blur', 'change']
                 },
                 passwordAgin: [{
                     validator: passwordAgin,
+                    required: true,
+
                     trigger: 'blur'
                 }],
                 email: [{
                         required: true,
                         message: '请输入邮箱地址',
-                        trigger: 'blur,change'
+                        trigger: ['blur', 'change']
                     },
                     {
                         type: 'email',
                         message: '请输入正确的邮箱地址',
-                        trigger: 'blur,change'
+                        trigger: ['blur', 'change']
                     }
                 ],
             }
@@ -140,6 +195,7 @@ export default {
 
     methods: {
         loginMethod() {
+            console.log(this.$refs.ruleForm)
             this.$refs.ruleForm.validate(validate => {
                 if (validate) {
                     this.userSingin()
@@ -154,24 +210,26 @@ export default {
             }
             let methods = this.isSingIn ? 'login' : 'singIn'
             this.$axios({
-                url: 'api/'+methods,
+                url: 'api/' + methods,
                 data: obj
             }).then(res => {
-                if(res.data.value){
-                    let user={
-                        email:this.ruleForm.email,
-                        token:res.data.value.token
+                if (res.data.value) {
+                    let user = {
+                        email: this.ruleForm.email,
+                        token: res.data.value.token
                     }
-                localStorage.setItem('token',res.data.value.token)
-                localStorage.setItem('user',JSON.stringify(user))
-                   localStorage.setItem("youke", false);
-                  if(this.isSingIn &&this.$route.query.redirect){
-                        this.$router.replace({path:this.$route.query.redirect})
+                    localStorage.setItem('token', res.data.value.token)
+                    localStorage.setItem('user', JSON.stringify(user))
+                    localStorage.setItem("youke", false);
+                    if (this.isSingIn && this.$route.query.redirect) {
+                        this.$router.replace({
+                            path: this.$route.query.redirect
+                        })
                     }
                 }
             })
         },
-       
+
         seePwd(data) {
             this[data] = this[data] === 'text' ? 'password' : 'text'
         },
@@ -191,19 +249,19 @@ export default {
             })
         },
         getRuleCode() {
-                 this.disabledBtn=true
-                var timer = setInterval(() => {
-                    if (this.time === 0) {
-                        clearInterval(timer)
-                        this.timeString = '重新获取验证码'
-                        this.time = 60
-                         this.disabledBtn=false
-                    } else {
-                        this.time--
-                        this.timeString = this.time
-                    }
-                }, 1000);
-                this.sendEmail()
+            this.disabledBtn = true
+            var timer = setInterval(() => {
+                if (this.time === 0) {
+                    clearInterval(timer)
+                    this.timeString = '重新获取验证码'
+                    this.time = 60
+                    this.disabledBtn = false
+                } else {
+                    this.time--
+                    this.timeString = this.time
+                }
+            }, 1000);
+            this.sendEmail()
 
         }
     }
@@ -245,6 +303,9 @@ export default {
 }
 </style><style lang="less" scoped>
 #login {
+    height: 100%;
+    width: 100%;
+
     .waring {
         padding-left: 30px;
         box-sizing: border-box;
@@ -314,5 +375,92 @@ export default {
             background: #DDD;
         }
     }
+
+    .bigScrenn {
+        width: 100%;
+        height: 100%;
+        display: flex;
+
+        .fle1 {
+            flex: 1;
+            height: 100%;
+
+        }
+
+        .centerBoxs {
+            width: 80%;
+            // width: 1000px;
+            background: #fff;
+            height: calc(100% - 30px);
+            margin-top: 70px;
+            border-radius: 30px;
+            box-shadow: 10px 10px 10px rgba(26, 26, 26, 0.1);
+            // height:100%;
+            // height:600px;
+            overflow: hidden;
+            display: flex;
+
+            .box1 {
+                width: 30%;
+                background: #333;
+                height: 100%
+            }
+
+            .flex1 {
+                height: 100%;
+                flex: 1;
+
+                .loginCenterBox {
+                    width: 500px;
+                    height: 100%;
+                    margin: auto;
+                    display: flex;
+                    align-items: center;
+
+                    .fat {
+                        position: relative;
+                        top: -60px;
+                        width: 100%;
+                    }
+
+                    // .fromInputLg{
+                    // position: relative;
+                    .titleBox {
+                        text-align: center;
+                        line-height: 130px;
+                    }
+
+                    .rightIconLg {
+                        position: relative;
+                        top: 5px;
+                        right: 0;
+                    }
+
+                    // }
+                    .el-form.demo-form-inline {
+                        flex: 1;
+                        text-align: center;
+                    }
+
+                    .loginMethodsLarge {
+                        // margin: auto;
+                        width: 70%;
+                        background: #eee;
+                    }
+
+                    .leftIcon {
+                        position: unset;
+                        top: 0;
+                        left: 0;
+                    }
+                }
+            }
+
+        }
+    }
+}
+</style><style scoped>
+.centerBox {
+    overflow: unset !important;
 }
 </style>

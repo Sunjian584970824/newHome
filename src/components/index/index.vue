@@ -4,8 +4,8 @@
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js'></script>-->
 
-    <div class="flex1"></div>
-    <div class="mainBox">
+    <div class="flex1" v-show='mainBox'></div>
+    <div class="mainBox" v-show='mainBox'>
         <div class="left smBoxWidth">
             <!-- <div class="header">
                 <span :class="{'active':titleITem==='推荐'}" @click="titleITem='推荐'">推荐</span>
@@ -49,7 +49,7 @@
             <div class="noMore">没有更多了</div>
         </div>
     </div>
-    <div class="flex1">
+    <div class="flex1" v-show='isSugesst'>
         <div class="takBox">
             <h2>及时聊天室</h2>
             <div class="messBox">
@@ -68,15 +68,15 @@
                 <path d="M512 1010.4c-274.4 0-497.6-224-497.6-498.4S237.6 14.4 512 14.4s498.4 223.2 498.4 498.4-224 497.6-498.4 497.6zM512 68C267.2 68 68 267.2 68 512s199.2 444 444 444 444-199.2 444-444S756.8 68 512 68z" fill p-id="1687" />
                 <path d="M643.2 367.2c0 36 29.6 65.6 65.6 65.6 36 0 65.6-29.6 65.6-65.6s-29.6-65.6-65.6-65.6c-36 0-65.6 29.6-65.6 65.6z" fill p-id="1688" />
             </svg>
-            <el-input type="textarea" v-model="inner" placeholder="请输入内容..." :rows="5" class="contenteditable"></el-input>
-            <el-button @click="submitSocket">发送</el-button>
+            <el-input type="textarea" v-model="inner" ref='text' @keydown.native="innerInput($event)" placeholder="请输入内容..." :rows="5" class="contenteditable"></el-input>
+            <el-button class='buttonSubmit' @click="submitSocket">发送</el-button>
         </div>
     </div>
 </div>
 </template>
 
 <script>
-const socket = io.connect("http://localhost:9000");
+const socket = io.connect("http://10.120.1.171:9000");
 import jwt from "jsonwebtoken";
 import emtion from "../public/Emotion/Emotion.vue";
 import { mavonEditor } from "mavon-editor";
@@ -213,7 +213,14 @@ export default {
       this.loading = false;
     });
   },
-
+computed:{
+    mainBox(){
+        return this.$store.state.mainBox
+    },
+      isSugesst(){
+        return this.$store.state.isSugesst
+    },
+},
   mounted() {
     var _this = this;
     let user = localStorage.getItem("user");
@@ -240,6 +247,12 @@ export default {
   },
   methods: {
     socketMethod() {},
+    innerInput(e){
+        console.dir(e)
+        if(e.code==='Enter'){
+            this.submitSocket()
+        }
+    },
     submitSocket() {
       let user = localStorage.getItem("user");
       var token = localStorage.getItem("token");
@@ -278,6 +291,7 @@ export default {
 </script>
 
 <style lang="less">
+
 #index {
     .titleContent {
         img {
@@ -287,7 +301,12 @@ export default {
 
     .submitBox {
         height: 230px;
-
+        position: relative;
+        .buttonSubmit{
+            position: absolute;
+            right:10px;
+            bottom:10px
+        }
         .contenteditable {
             .el-textarea__inner {
                 border: none;
@@ -372,7 +391,7 @@ export default {
             background: #fff;
             padding: 10px;
             box-sizing: border-box;
-
+            height:170px !important;
             svg:hover {
                 cursor: pointer;
             }
@@ -422,6 +441,7 @@ export default {
     .mainBox {
         display: flex;
         // width: 1000px;
+        background: #fff;
         margin: 10px 0;
         height: calc(100% - 20px);
         overflow: auto;

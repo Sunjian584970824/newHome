@@ -41,13 +41,14 @@
         <div class="footerItem" @click='checkRoute("首页")'> 首页 </div>
         <div class="footerItem" @click='checkRoute("发布")'> 发布 </div>
         <div class="footerItem" style='flex:1;text-align: center' v-if="CanEidet.includes($route.name)"> 保存 </div>
-        <div class="footerItem" style='flex:1;text-align: center' v-else> + </div>
+        <div class="footerItem" style='flex:1;text-align: center' v-else @click="isSugesst()"> + </div>
         <div class="footerItem" @click='checkRoute("音乐")'> 音乐 </div>
         <div class="footerItem" @click='checkRoute("我")'> 我的 </div>
 
     </div>
 </div>
 </template>
+
 <script>
 export default {
     name: 'app',
@@ -56,7 +57,8 @@ export default {
             searchText: "",
             active: "首页", //当前header状态
             isSmallScreen: true, //当前是否是小屏幕
-            CanEidet: ['suggest']
+            CanEidet: ['suggest'],
+            suggest: false,
         }
     },
     watch: {
@@ -66,7 +68,7 @@ export default {
 
     },
     mounted() {
-         
+
         var _this = this
         this.Screen()
         window.onresize = () => {
@@ -81,13 +83,43 @@ export default {
             //     style = routeArray.includes(route) ? 'none' : height <= 768 ? 'flex' : 'none' // 如果当前页面 是suggest 则不显示底部footer否则显示
             //     _this.$refs.footer.style.display = style
         }
+        this.Screen()
     },
     methods: {
+        isSugesst() {
+            console.log(this.$route.path)
+            if (this.$route.path === '/') {
+                if (this.$store.state.isSmallScreen) {
+                    this.$store.commit('isSugesst', !this.$store.state.isSugesst)
+                    this.$store.commit('mainBox', !this.$store.state.mainBox)
+                } else {
+                    this.$store.commit('isSugesst', true)
+                    this.$store.commit('mainBox', true)
+                }
+            }else{
+                this.$router.push('/')
+                      this.$store.commit('isSugesst', true)
+                    this.$store.commit('mainBox', false)
+            }
+
+        },
+
         Screen() {
             let height = document.documentElement.clientHeight;
             this.height = height
             this.isSmallScreen = height <= 768 ? true : false; //手机不显示编辑器头部栏
             this.$store.commit('isSmallScreen', this.isSmallScreen)
+            if (this.$store.state.isSmallScreen) {
+                if (this.$store.state.mainBox && this.$store.state.isSugesst) {
+                    this.$store.commit('isSugesst', false)
+                } else {
+                    this.$store.commit('isSugesst', !this.$store.state.mainBox)
+                    this.$store.commit('mainBox', !this.$store.state.isSugesst)
+                }
+            } else {
+                this.$store.commit('isSugesst', true)
+                this.$store.commit('mainBox', true)
+            }
         },
         checkRoute(str) {
             this.active = str;
@@ -114,7 +146,15 @@ export default {
                     route = el.path
                 }
             })
+              console.log(route)
+
+             if(route==='/' &&this.isSmallScreen){
+                 console.log('首页首页首页首页首页首页首页首页首页首页首页首页首页首页首页首页')
+                      this.$store.commit('isSugesst', false)
+                    this.$store.commit('mainBox', true)
+            }
             this.$router.push(route)
+           
         }
     },
 
@@ -127,7 +167,7 @@ export default {
 .contentBox {
     height: calc(100% - 200px);
     box-sizing: border-box;
-    overflow:hidden
+    // overflow: hidden
 }
 
 html,
@@ -221,6 +261,7 @@ body,
 
     .contentBox {
         height: calc(100% - 131px);
+        overflow: hidden;
     }
 
     .footer {
