@@ -30,15 +30,6 @@ var router = new VueRouter({
                 import ('@/components/suggest/index.vue')
         },
         {
-            path: '/test',
-            name: 'test',
-            meta: {
-                title: "test",
-            },
-            component: () =>
-                import ('@/components/text.vue')
-        },
-        {
             path: '/music',
             name: 'music',
             meta: {
