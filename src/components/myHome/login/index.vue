@@ -103,7 +103,7 @@
                                 </div>
 
                             </div>
-                         <div style="text-align:left;width:100%" @click="changeLogin(false)">没有账号？快去注册吧</div>
+                            <div style="text-align:left;width:100%" @click="changeLogin(false)">没有账号？快去注册吧</div>
                         </el-form>
                     </div>
 
@@ -135,7 +135,24 @@ export default {
 
             }
         }
+        var userNameRule = async function (rule, value, callback) {
+          
+            if (!(value.toString())) {
+                  console.log(value.toString())
+                return callback(new Error('请输入用户名'));
+            } else {
+               await _this.queryUserName()
+               
+                if( _this.queryUserNameValue.code===301){
+                      return callback(new Error('用户名已被使用'));
+                }else{
+                return callback();
+
+                }
+            }
+        }
         return {
+            queryUserNameValue:{},
             passwordAginText: 'password',
             passwordText: 'password',
             timeString: '获取验证码',
@@ -163,13 +180,12 @@ export default {
                 },
                 userName: {
                     required: true,
-                    message: '请输入用户名',
-                    trigger: ['blur', 'change']
+                    trigger: ['blur', 'change'],
+                    validator: userNameRule,
                 },
                 passwordAgin: [{
                     validator: passwordAgin,
                     required: true,
-
                     trigger: 'blur'
                 }],
                 email: [{
@@ -194,6 +210,16 @@ export default {
     },
 
     methods: {
+         queryUserName() {
+             this.$axios({
+                url: 'api/queryUserName',
+                data: {
+                    userName: this.ruleForm.userName
+                }
+            }).then(res => {
+                this.queryUserNameValue= res.data.data
+            })
+        },
         loginMethod() {
             console.log(this.$refs.ruleForm)
             this.$refs.ruleForm.validate(validate => {
@@ -236,9 +262,9 @@ export default {
         changeLogin(type) {
             this.isSingIn = type
             this.$refs.ruleForm.resetFields()
-            // this.$axios({
-            //     url: '/login'
-            // })
+            for (var key in this.ruleForm) {
+                this.$set(this.ruleForm, key, '')
+            }
         },
         sendEmail() {
             this.$axios({

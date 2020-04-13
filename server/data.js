@@ -11,9 +11,9 @@ const user = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    userName: { //权限集合
+    userName: { //用户名
         type: String,
-        default: 0
+        default: ''
     }, //用户名
     password: String, //密码
     createTime: Date, //创建时间

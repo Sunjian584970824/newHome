@@ -13,14 +13,15 @@ const util = require('./util')
 const CodeExpiredTime = 60 //验证码过期时间
     /*
         code:
-            501:登录过期
+            501:登录过期,
+            301:用户名已经被注册,
     */
-var respones = function(type, value, message) {
+var respones = function(type, value, message, code) {
     let obj = {
         success: type,
         value: value,
         message: message,
-        code: type ? 200 : 500
+        code: code ? code : (type ? 200 : 500)
     }
     return obj
 }
@@ -182,6 +183,20 @@ router.post('/queryIndexList', async(req, res) => {
         res.send(data)
     })
 })
+router.post('/queryUserName', async(req, res) => {
+    let queryListName = []
+    let responesObj = {}
+    let body = req.body
+    let userModel = mongoose.model('user');
+    queryListName = await util.find({ model: userModel, data: { userName: body.userName }, })
+    if (queryListName.length > 0) {
+        responesObj = respones(true, '', '该用户名已被使用', 301)
+    } else {
+        responesObj = respones(true, '', '')
+
+    }
+    res.send({ data: responesObj })
+})
 router.post('/singIn', async(req, res) => {
     let body = req.body
     let responesObj = {}
@@ -194,10 +209,15 @@ router.post('/singIn', async(req, res) => {
         return
     }
     let userModel = mongoose.model('user');
-    let queryList = []
+    let queryList = [],
+        queryListName = []
     queryList = await util.find({ model: userModel, data: { email: body.email }, })
+    queryListName = await util.find({ model: userModel, data: { userName: body.userName }, })
     if (queryList.length > 0) {
         responesObj = respones(true, '', '该邮箱已注册')
+    } else if (queryList.length > 0) {
+        responesObj = respones(true, '', '该用户名已被使用')
+
     } else {
         let ssk = body.email
             // let ssk=fs.readFileSync('./privkey.pem')
@@ -207,6 +227,7 @@ router.post('/singIn', async(req, res) => {
             createTime: new Date(), //创建时间
             sessionToken: token, //token
             email: body.email, //email
+            userName: body.userName, //email
         })
         let saveErr = await user.save()
 

@@ -12,7 +12,7 @@
     </div>
     <div class='footerPlay' @click="playMusic">
         <audio controls ref='audio' style="display:none">
-            <source src="http://10.120.1.171:3000\test.mp3">
+            <source src="http://10.120.1.171:3000\你好.mp3">
         </audio>
         <!-- <source src="../../assets/music/周杰伦 - 安静.mflac" type="audio/mpeg"> -->
         <div class="listItem">
