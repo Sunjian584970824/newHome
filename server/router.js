@@ -26,6 +26,7 @@ var respones = function(type, value, message, code) {
     return obj
 }
 router.all('*', async(req, res, next) => {
+    console.log(req, res)
     res.header('Access-Control-Allow-Origin', '*');
     //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
     res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -34,7 +35,6 @@ router.all('*', async(req, res, next) => {
     let url = ['/centerFile', '/comment']
     if (url.includes(req.originalUrl)) {
         let isverify = await verify({ token: req.headers.token, ssk: req.body.email })
-        console.log(isverify)
         if (isverify) {
             let data = respones(false, {}, 'token过期，请重新登录')
             data.code = 501
@@ -106,8 +106,7 @@ router.get('*', function(req, res) { // 对所有get请求处理
     });
 })
 router.post('/sendEmail', (req, res) => {
-    console.log(req.body)
-        // 这里的req.body能够使用就在index.js中引入了const bodyParser = require('body-parser')
+    // 这里的req.body能够使用就在index.js中引入了const bodyParser = require('body-parser')
     var transporter = nodemailer.createTransport({
         host: 'smtp.163.com',
         port: 465,
@@ -142,9 +141,7 @@ router.post('/sendEmail', (req, res) => {
             saveEmail.save((e, doc) => {
                 if (e) return handleError(e);
                 transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        return console.log(error);
-                    } else {
+                    if (error) {} else {
                         response = respones(true, code, '验证码已发送值邮箱，请查看')
                         res.send(response)
                     }
@@ -152,7 +149,6 @@ router.post('/sendEmail', (req, res) => {
             })
         } else {
             sendEmail.update({ email: req.body.email }, { time: new Date(), testNum: code }, (err, raw) => {
-                console.log(err, raw)
                 if (err) return handleError(err);
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
@@ -175,7 +171,7 @@ var verify = async function(data) {
     });
     return res
 }
-router.post('/queryIndexList', async(req, res) => {
+router.post('/core/queryIndexList', async(req, res) => {
     let centerFile = new mongoose.model('centerFile')
         //0查询返回自定字段，1不返回改字段
     centerFile.find({}, { title: 1, createTime: 1, titleImage: 1, content: 1, }, (ress, doc) => {
@@ -183,7 +179,7 @@ router.post('/queryIndexList', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/queryUserName', async(req, res) => {
+router.post('/core/queryUserName', async(req, res) => {
     let queryListName = []
     let responesObj = {}
     let body = req.body
@@ -197,12 +193,12 @@ router.post('/queryUserName', async(req, res) => {
     }
     res.send({ data: responesObj })
 })
-router.post('/singIn', async(req, res) => {
+router.post('/core/singIn', async(req, res) => {
     let body = req.body
     let responesObj = {}
     let sendEmail = mongoose.model('sendEmail');
     let emailObj = []
-    emailObj = await util.find({ model: sendEmail, data: { email: body.email }, })
+    emailObj = await util.find({ model: sendEmail, data: { email: body.email, testNum: body.code }, })
     if (emailObj.length === 0 || emailObj[0].email !== body.email) {
         responesObj = respones(false, emailObj, '验证码错误')
         res.send({ data: responesObj })
@@ -215,7 +211,7 @@ router.post('/singIn', async(req, res) => {
     queryListName = await util.find({ model: userModel, data: { userName: body.userName }, })
     if (queryList.length > 0) {
         responesObj = respones(true, '', '该邮箱已注册')
-    } else if (queryList.length > 0) {
+    } else if (queryListName.length > 0) {
         responesObj = respones(true, '', '该用户名已被使用')
 
     } else {
@@ -237,10 +233,11 @@ router.post('/singIn', async(req, res) => {
     res.send({ data: responesObj })
 
 })
-router.post('/login', async(req, res) => {
+router.post('/core/login', async(req, res) => {
     let body = req.body
     let data
     let user = new mongoose.model('user')
+
     let params = { email: body.email, password: body.password }
     let userObj = await util.find({ model: user, data: params })
     if (userObj.length === 0) {
@@ -259,7 +256,7 @@ router.post('/login', async(req, res) => {
     }
     res.send(data)
 })
-router.post('/centerFile', async(req, res) => {
+router.post('/core/centerFile', async(req, res) => {
     let body = req.body;
     let data
     let obj = {
@@ -285,7 +282,7 @@ router.post('/centerFile', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/img', (req, res) => {
+router.post('/core/img', (req, res) => {
     const form = new formidable.IncomingForm()
     form.encoding = 'utf-8';
     form.uploadDir = path.join(__dirname + "/img");
@@ -293,7 +290,6 @@ router.post('/img', (req, res) => {
     form.maxFieldsSize = 2 * 1024 * 1024;
     // form.uploadDir = "./uploads";
     form.parse(req, function(err, frelds, files) {
-        console.log(files)
         var filename = files.image.name
         var nameArray = filename.split('.');
         var type = nameArray[nameArray.length - 1];
@@ -309,7 +305,7 @@ router.post('/img', (req, res) => {
         res.send({ data: "/img/" + avatarName, success: true })
     })
 })
-router.post('/queryDetail', async(req, res) => {
+router.post('/core/queryDetail', async(req, res) => {
     let centerFile = new mongoose.model('centerFile')
     centerFile.findById(req.body.id, (err, doc) => {
         if (err) return handleError(err);
@@ -317,13 +313,12 @@ router.post('/queryDetail', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/comment', async(req, res) => {
+router.post('/core/comment', async(req, res) => {
     let centerFile = new mongoose.model('comment')
     let obj = {
         time: new Date()
     }
     obj = Object.assign(obj, req.body)
-    console.log(obj, req.body)
     let save = new centerFile(obj)
     save.save((err) => {
         if (err) return handleError(err);
@@ -331,7 +326,7 @@ router.post('/comment', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/queryComment', (req, res) => {
+router.post('/core/queryComment', (req, res) => {
     let centerFile = new mongoose.model('comment')
     centerFile.find({ id: req.body.id }, (err, doc) => {
         if (err) return handleError(err);

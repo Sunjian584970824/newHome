@@ -8,7 +8,7 @@ module.exports = {
         open: true, //配置自动启动浏览器,
         hot: true,
         host: '0.0.0.0',
-        port: 8002,
+        port: 8080,
         https: false,
         hotOnly: false,
         proxy: {
@@ -20,16 +20,6 @@ module.exports = {
                     '^/api': ''
                 }
             },
-            '/socket': {
-                target: 'http://10.120.1.171:9000', // target host
-                changeOrigin: true, // needed for virtual hosted sites
-                ws: false,
-            },
-            '/sockjs-node': {
-                target: 'http://10.120.1.171:9000', // target host
-                changeOrigin: true, // needed for virtual hosted sites
-                ws: false,
-            }
         }
     },
 }

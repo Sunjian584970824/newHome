@@ -5,8 +5,15 @@ import elementUi from 'element-ui'
 import store from './store/index'
 import 'element-ui/lib/theme-chalk/index.css'
 import http from './assets/js/axios.js'
+import VueSocketIO from 'vue-socket.io'
 Vue.use(elementUi)
+Vue.use(new VueSocketIO({
 
+    debug: true,
+
+    connection: 'http://10.120.1.171:9000', //
+
+}))
 Vue.config.productionTip = false
 Vue.prototype.$goback = function() {
     window.history.go(-1)

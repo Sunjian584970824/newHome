@@ -235,6 +235,9 @@ export default {
                 email: this.ruleForm.email, //email
             }
             let methods = this.isSingIn ? 'login' : 'singIn'
+            if(methods==='singIn'){
+                obj.code=this.ruleForm.code
+            }
             this.$axios({
                 url: 'api/' + methods,
                 data: obj
@@ -250,6 +253,10 @@ export default {
                     if (this.isSingIn && this.$route.query.redirect) {
                         this.$router.replace({
                             path: this.$route.query.redirect
+                        })
+                    }else{
+                          this.$router.replace({
+                            path: '/'
                         })
                     }
                 }
