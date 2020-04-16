@@ -13,6 +13,7 @@ axios.interceptors.request.use(function(config) {
     // 对请求错误做些什么
     return Promise.reject(error);
 });
+axios.defaults.baseURL = 'http://47.93.117.110:3000/';
 axios.interceptors.response.use(
     response => {
         //拦截响应，做统一处理 

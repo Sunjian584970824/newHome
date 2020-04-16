@@ -11,7 +11,7 @@ Vue.use(new VueSocketIO({
 
     debug: true,
 
-    connection: 'http://10.120.1.171:9000', //
+    connection: 'http://47.93.117.110:9000', //
 
 }))
 Vue.config.productionTip = false
