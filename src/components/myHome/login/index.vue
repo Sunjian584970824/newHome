@@ -212,7 +212,7 @@ export default {
     methods: {
          queryUserName() {
              this.$axios({
-                url: 'api/queryUserName',
+                url: 'api/core/queryUserName',
                 data: {
                     userName: this.ruleForm.userName
                 }
@@ -239,7 +239,7 @@ export default {
                 obj.code=this.ruleForm.code
             }
             this.$axios({
-                url: 'api/' + methods,
+                url: 'api/core/' + methods,
                 data: obj
             }).then(res => {
                 if (res.data.value) {
@@ -275,7 +275,7 @@ export default {
         },
         sendEmail() {
             this.$axios({
-                url: 'api/sendEmail',
+                url: 'api/core/sendEmail',
                 data: {
                     email: this.ruleForm.email
                 }

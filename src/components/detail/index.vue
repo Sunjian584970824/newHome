@@ -126,7 +126,7 @@ export default {
     methods: {
         queryComment() {
             this.$axios({
-                url: 'api/queryComment',
+                url: 'api/core/queryComment',
                 data: {
                     id: this.$route.params.id,
                 }
@@ -137,7 +137,7 @@ export default {
         submit(inner) {
             let user = JSON.parse(localStorage.getItem('user'))
             this.$axios({
-                url: 'api/comment',
+                url: 'api/core/comment',
                 data: {
                     id: this.$route.params.id,
                     comment: inner,
@@ -151,7 +151,7 @@ export default {
         async queryDetail() {
             let res
             await this.$axios({
-                url: "api/queryDetail",
+                url: "api/core/queryDetail",
                 data: {
                     id: this.id
                 }
