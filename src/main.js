@@ -1,12 +1,12 @@
-import Vue from 'vue'
+// import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import elementUi from 'element-ui'
+// import element-ui from 'element-ui'
 import store from './store/index'
-import 'element-ui/lib/theme-chalk/index.css'
+// import 'element-ui/lib/theme-chalk/index.css'
 import http from './assets/js/axios.js'
 import VueSocketIO from 'vue-socket.io'
-Vue.use(elementUi)
+// Vue.use(element-ui)
 Vue.use(new VueSocketIO({
 
     debug: true,
