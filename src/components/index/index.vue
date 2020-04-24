@@ -260,7 +260,7 @@ export default {
   created() {
     // setTimeout(() => {
     this.$axios({
-      url: "api/core/queryIndexList"
+      url: "api/queryIndexList"
     }).then(res => {
       this.contentList = res.data.value.doc;
       this.loading = false;

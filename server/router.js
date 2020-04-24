@@ -26,7 +26,6 @@ var respones = function(type, value, message, code) {
     return obj
 }
 router.all('*', async(req, res, next) => {
-    console.log(req, res)
     res.header('Access-Control-Allow-Origin', '*');
     //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
     res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -105,7 +104,7 @@ router.get('*', function(req, res) { // 对所有get请求处理
         }
     });
 })
-router.post('/api/core/sendEmail', (req, res) => {
+router.post('/sendEmail', (req, res) => {
     // 这里的req.body能够使用就在index.js中引入了const bodyParser = require('body-parser')
     var transporter = nodemailer.createTransport({
         host: 'smtp.163.com',
@@ -171,7 +170,7 @@ var verify = async function(data) {
     });
     return res
 }
-router.post('/api/core/queryIndexList', async(req, res) => {
+router.post('/queryIndexList', async(req, res) => {
     let centerFile = new mongoose.model('centerFile')
         //0查询返回自定字段，1不返回改字段
     centerFile.find({}, { title: 1, createTime: 1, titleImage: 1, content: 1, }, (ress, doc) => {
@@ -179,7 +178,7 @@ router.post('/api/core/queryIndexList', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/api/core/queryUserName', async(req, res) => {
+router.post('/queryUserName', async(req, res) => {
     let queryListName = []
     let responesObj = {}
     let body = req.body
@@ -193,7 +192,7 @@ router.post('/api/core/queryUserName', async(req, res) => {
     }
     res.send({ data: responesObj })
 })
-router.post('/api/core/singIn', async(req, res) => {
+router.post('/singIn', async(req, res) => {
     let body = req.body
     let responesObj = {}
     let sendEmail = mongoose.model('sendEmail');
@@ -233,7 +232,7 @@ router.post('/api/core/singIn', async(req, res) => {
     res.send({ data: responesObj })
 
 })
-router.post('/api/core/login', async(req, res) => {
+router.post('/login', async(req, res) => {
     let body = req.body
     let data
     let user = new mongoose.model('user')
@@ -256,7 +255,7 @@ router.post('/api/core/login', async(req, res) => {
     }
     res.send(data)
 })
-router.post('/api/core/centerFile', async(req, res) => {
+router.post('/centerFile', async(req, res) => {
     let body = req.body;
     let data
     let obj = {
@@ -282,7 +281,7 @@ router.post('/api/core/centerFile', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/api/core/img', (req, res) => {
+router.post('/img', (req, res) => {
     const form = new formidable.IncomingForm()
     form.encoding = 'utf-8';
     form.uploadDir = path.join(__dirname + "/img");
@@ -305,7 +304,7 @@ router.post('/api/core/img', (req, res) => {
         res.send({ data: "/img/" + avatarName, success: true })
     })
 })
-router.post('/api/core/queryDetail', async(req, res) => {
+router.post('/queryDetail', async(req, res) => {
     let centerFile = new mongoose.model('centerFile')
     centerFile.findById(req.body.id, (err, doc) => {
         if (err) return handleError(err);
@@ -313,7 +312,7 @@ router.post('/api/core/queryDetail', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/api/core/comment', async(req, res) => {
+router.post('/comment', async(req, res) => {
     let centerFile = new mongoose.model('comment')
     let obj = {
         time: new Date()
@@ -326,12 +325,23 @@ router.post('/api/core/comment', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/api/core/queryComment', (req, res) => {
+router.post('/queryComment', (req, res) => {
     let centerFile = new mongoose.model('comment')
     centerFile.find({ id: req.body.id }, (err, doc) => {
         if (err) return handleError(err);
         let data = respones(true, { doc }, '成功')
         res.send(data)
+    })
+})
+router.post('/music', (req, res) => {
+    fs.readdir(__dirname + '/music', (err, files) => {
+        let responses = {}
+        if (err) {
+            responses = respones(false, '', '')
+        } else {
+            responses = respones(true, files, '')
+        }
+        res.send(responses)
     })
 })
 module.exports = router;

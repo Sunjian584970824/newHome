@@ -117,6 +117,7 @@
 
 <script>
 import md5 from 'md5'
+
 var _this
 export default {
     computed: {
@@ -136,23 +137,23 @@ export default {
             }
         }
         var userNameRule = async function (rule, value, callback) {
-          
+
             if (!(value.toString())) {
-                  console.log(value.toString())
+                console.log(value.toString())
                 return callback(new Error('请输入用户名'));
             } else {
-               await _this.queryUserName()
-               
-                if( _this.queryUserNameValue.code===301){
-                      return callback(new Error('用户名已被使用'));
-                }else{
-                return callback();
+                await _this.queryUserName()
+
+                if (_this.queryUserNameValue.code === 301) {
+                    return callback(new Error('用户名已被使用'));
+                } else {
+                    return callback();
 
                 }
             }
         }
         return {
-            queryUserNameValue:{},
+            queryUserNameValue: {},
             passwordAginText: 'password',
             passwordText: 'password',
             timeString: '获取验证码',
@@ -210,14 +211,14 @@ export default {
     },
 
     methods: {
-         queryUserName() {
-             this.$axios({
-                url: 'api/core/queryUserName',
+        queryUserName() {
+            this.$axios({
+                url: 'api/queryUserName',
                 data: {
                     userName: this.ruleForm.userName
                 }
             }).then(res => {
-                this.queryUserNameValue= res.data.data
+                this.queryUserNameValue = res.data.data
             })
         },
         loginMethod() {
@@ -235,14 +236,16 @@ export default {
                 email: this.ruleForm.email, //email
             }
             let methods = this.isSingIn ? 'login' : 'singIn'
-            if(methods==='singIn'){
-                obj.code=this.ruleForm.code
+            if (methods === 'singIn') {
+                obj.code = this.ruleForm.code
             }
             this.$axios({
-                url: 'api/core/' + methods,
+                url: 'api/' + methods,
                 data: obj
             }).then(res => {
-                if (res.data.value) {
+                      console.log(res,'666666666666666666666666')
+                if (res.data.data.value) {
+                    debugger
                     let user = {
                         email: this.ruleForm.email,
                         token: res.data.value.token
@@ -254,11 +257,18 @@ export default {
                         this.$router.replace({
                             path: this.$route.query.redirect
                         })
-                    }else{
-                          this.$router.replace({
+                    } else {
+                        this.$router.replace({
                             path: '/'
                         })
                     }
+                } else {
+              
+                    this.$message({
+                        message: res.data.data.message,
+                        type: 'error',
+                        duration: 3 * 1000
+                    })
                 }
             })
         },
@@ -275,7 +285,7 @@ export default {
         },
         sendEmail() {
             this.$axios({
-                url: 'api/core/sendEmail',
+                url: 'api/sendEmail',
                 data: {
                     email: this.ruleForm.email
                 }

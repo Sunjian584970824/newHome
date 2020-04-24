@@ -97,7 +97,7 @@ export default {
                     titleImage:this.titleImage
                 }
                 this.$axios({
-                    url: 'api/core/centerFile',
+                    url: 'api/centerFile',
                     data: obj
                 }).then(res => {
                   
@@ -138,7 +138,7 @@ export default {
                 }
             }; //添加请求头
             this.$axios({
-                url: 'api/core/img',
+                url: 'api/img',
                 data: param,
                 headers: config
             }).then(res => {
