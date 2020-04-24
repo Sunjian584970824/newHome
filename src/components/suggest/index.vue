@@ -142,9 +142,9 @@ export default {
                 data: param,
                 headers: config
             }).then(res => {
-                this.$refs.md.$img2Url(e, 'http://10.120.1.171:3000/' + res.data.data);
+                this.$refs.md.$img2Url(e, `${$locationUrls}/music/${res.data.data}`);
                 if(!this.titleImage){
-                this.titleImage='http://10.120.1.171:3000/' + res.data.data
+                this.titleImage=`${$locationUrls}/music/${res.data.data}`
                 }
             })
         },

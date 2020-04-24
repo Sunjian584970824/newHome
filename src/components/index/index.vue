@@ -129,7 +129,6 @@
 </template>
 
 <script>
-// const socket = io.connect("http://10.120.1.171:9000");
 import jwt from "jsonwebtoken";
 import emtion from "../public/Emotion/Emotion.vue";
 import { mavonEditor } from "mavon-editor";

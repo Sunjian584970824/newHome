@@ -51,7 +51,7 @@ export default {
         return {
             musicFile: [],
             index: 0,
-            musicSrc: 'http://10.120.1.171:3000/music/你好.mp3',
+            musicSrc: '',
             stop: false,
         }
     },
@@ -78,13 +78,12 @@ export default {
             this.playMusic()
         },
         play() {
-            // `http://10.120.1.171:3000/${this.musicFile[index]}`
             this.$axios({
                 url: 'api/music',
             }).then(res => {
                 let musicFile = res.data.value;
                 this.musicFile = musicFile
-                this.musicSrc = `http://10.120.1.171:3000/${musicFile[0]}`
+                this.musicSrc = `${this.$locationUrls}/music/${musicFile[0]}`
                 var html = `  <audio controls id='audio' style="display:none">  <source src="${this.musicSrc}">   </audio>  `
                 this.$refs.videoBox.innerHTML = html
                 sessionStorage.setItem('sj_musicFile', JSON.stringify(musicFile))
@@ -97,7 +96,7 @@ export default {
 
         },
         htmlPubic() {
-            this.musicSrc = `http://10.120.1.171:3000/music/${this.musicFile[ this.index]}`
+            this.musicSrc = `${this.$locationUrls}/music/${this.musicFile[ this.index]}`
             var html = `  <audio controls id='audio' style="display:none">  <source src="${this.musicSrc}">   </audio>  `
             this.$refs.videoBox.innerHTML = html
         },

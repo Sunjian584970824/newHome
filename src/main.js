@@ -8,16 +8,15 @@ import http from './assets/js/axios.js'
 import VueSocketIO from 'vue-socket.io'
 // Vue.use(element-ui)
 Vue.use(new VueSocketIO({
-
     debug: true,
-
     connection: 'http://47.93.117.110:9000', //
-
 }))
 Vue.config.productionTip = false
 Vue.prototype.$goback = function() {
-    window.history.go(-1)
-}
+        window.history.go(-1)
+    }
+    // Vue.prototype.$locationUrls = 'http://10.120.1.171:3000'
+Vue.prototype.$locationUrls = 'http://47.93.117.110:3000'
 Vue.directive('emotion', {
     // 当绑定元素插入到 DOM 中。
     inserted: function(el) {
