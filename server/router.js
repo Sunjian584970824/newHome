@@ -229,7 +229,7 @@ router.post('/singIn', async(req, res) => {
         responesObj.type = true,
             responesObj.message = '注册成功'
     }
-    res.send({ data: responesObj })
+    res.send(responesObj)
 
 })
 router.post('/login', async(req, res) => {
