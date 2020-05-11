@@ -18,35 +18,35 @@ var app = express()
             301:用户名已经被注册,
     */
 var respones = function(type, value, message, code) {
-        let obj = {
-            success: type,
-            value: value,
-            message: message,
-            code: code ? code : (type ? 200 : 500)
-        }
-        return obj
+    let obj = {
+        success: type,
+        value: value,
+        message: message,
+        code: code ? code : (type ? 200 : 500)
     }
-    // router.all('*', async(req, res, next) => {
-    //     res.header('Access-Control-Allow-Origin', '*');
-    //     //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
-    //     res.header('Access-Control-Allow-Headers', 'Content-Type');
-    //     res.header('Access-Control-Allow-Methods', '*');
-    //     res.header('Content-Type', 'application/json;charset=utf-8');
-    //     let url = ['/centerFile', '/comment']
-    //     if (url.includes(req.originalUrl)) {
-    //         let isverify = await verify({ token: req.headers.token, ssk: req.body.email })
-    //         if (isverify) {
-    //             let data = respones(false, {}, 'token过期，请重新登录')
-    //             data.code = 501
-    //             res.send(data)
-    //         } else {
-    //             next();
-    //         }
-    //     } else {
-    //         next();
+    return obj
+}
+router.all('*', async(req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
+    res.header('Access-Control-Allow-Headers', 'Content-Type', 'token');
+    res.header('Access-Control-Allow-Methods', '*');
+    res.header('Content-Type', 'application/json;charset=utf-8');
+    let url = ['/centerFile', '/comment']
+    if (url.includes(req.originalUrl)) {
+        let isverify = await verify({ token: req.headers.token, ssk: req.body.email })
+        if (isverify) {
+            let data = respones(false, {}, 'token过期，请重新登录')
+            data.code = 501
+            res.send(data)
+        } else {
+            next();
+        }
+    } else {
+        next();
 
-//     }
-// });
+    }
+});
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*'); //添加这句话就可以正常返回数据了
     next();
