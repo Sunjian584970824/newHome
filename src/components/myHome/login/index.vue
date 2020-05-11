@@ -87,7 +87,7 @@
                                     <img class='rightIconLg myIcon ' slot="suffix" @click="seePwd('passwordText')" :src="passwordText==='text'?require('../../../assets/image/pwd_on.svg'):require('../../../assets/image/pwd_off.svg')" />
                                 </el-input>
                             </el-form-item>
-                            <el-form-item label="确认密码" prop="passwordAgin" v-if='!isSingIn'>
+                            <el-form-item label="确认密码" prop="passwordAgin">
                                 <el-input v-model="ruleForm.passwordAgin" :type='passwordAginText' placeholder="请确认密码">
                                     <img class='rightIconLg myIcon ' slot="suffix" @click="seePwd('passwordAginText')" :src="passwordAginText==='text'?require('../../../assets/image/pwd_on.svg'):require('../../../assets/image/pwd_off.svg')" />
                                 </el-input>
@@ -243,7 +243,9 @@ export default {
                 url: 'api/' + methods,
                 data: obj
             }).then(res => {
-                if (res.data.value) {
+                      console.log(res,'666666666666666666666666')
+                if (res.data.data.value) {
+                    debugger
                     let user = {
                         email: this.ruleForm.email,
                         token: res.data.value.token

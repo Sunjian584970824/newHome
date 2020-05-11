@@ -20,6 +20,16 @@ var router = new VueRouter({
                 import ('@/components/index/index.vue')
         },
         {
+            path: '/test',
+            name: 'test',
+            meta: {
+                title: "发布",
+                loginAuth: true,
+            },
+            component: () =>
+                import ('@/components/test/index.vue')
+        },
+        {
             path: '/suggest',
             name: 'suggest',
             meta: {

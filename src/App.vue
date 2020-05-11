@@ -43,7 +43,7 @@
         <div class="footerItem" style='flex:1;text-align: center' v-if="CanEidet.includes($route.name)"> 保存 </div>
         <div class="footerItem" style='flex:1;text-align: center' v-else @click="isSugesst()"> + </div>
         <div class="footerItem" @click='checkRoute("音乐")'> 音乐 </div>
-        <div class="footerItem" @click='checkRoute("个人中心")'> 我的 </div>
+        <div class="footerItem" @click='checkRoute("我")'> 我的 </div>
 
     </div>
 </div>
@@ -96,10 +96,10 @@ export default {
                     this.$store.commit('isSugesst', true)
                     this.$store.commit('mainBox', true)
                 }
-            } else {
+            }else{
                 this.$router.push('/')
-                this.$store.commit('isSugesst', true)
-                this.$store.commit('mainBox', false)
+                      this.$store.commit('isSugesst', true)
+                    this.$store.commit('mainBox', false)
             }
 
         },
@@ -146,12 +146,15 @@ export default {
                     route = el.path
                 }
             })
-            if (route === '/' && this.isSmallScreen) {
-                this.$store.commit('isSugesst', false)
-                this.$store.commit('mainBox', true)
+              console.log(route)
+
+             if(route==='/' &&this.isSmallScreen){
+                 console.log('首页首页首页首页首页首页首页首页首页首页首页首页首页首页首页首页')
+                      this.$store.commit('isSugesst', false)
+                    this.$store.commit('mainBox', true)
             }
             this.$router.push(route)
-
+           
         }
     },
 
