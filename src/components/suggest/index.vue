@@ -138,9 +138,9 @@ export default {
                 data: param,
                 headers: { 'Content-Type': 'multipart/form-data'}
             }).then(res => {
-                this.$refs.md.$img2Url(e, `${$locationUrls}/music/${res.data.data}`);
+                this.$refs.md.$img2Url(e, `${this.$locationUrls}${res.data.data}`);
                 if(!this.titleImage){
-                this.titleImage=`${$locationUrls}/music/${res.data.data}`
+                this.titleImage=`${this.$locationUrls}${res.data.data}`
                 }
             })
         },
