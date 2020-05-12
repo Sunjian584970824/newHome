@@ -132,15 +132,11 @@ export default {
             this.src = url
             var param = new FormData(); //创建form对象
             param.append('image', el, el.name); //通过append向form对象添加数据
-            let config = {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }; //添加请求头
+          
             this.$axios({
                 url: 'api/img',
                 data: param,
-                headers: config
+                headers: { 'Content-Type': 'multipart/form-data'}
             }).then(res => {
                 this.$refs.md.$img2Url(e, `${$locationUrls}/music/${res.data.data}`);
                 if(!this.titleImage){

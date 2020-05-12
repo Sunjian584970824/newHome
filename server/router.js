@@ -29,7 +29,8 @@ var respones = function(type, value, message, code) {
 router.all('*', async(req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
-    res.header('Access-Control-Allow-Headers', 'Content-Type', 'token');
+    res.header('Access-Control-Allow-Headers', 'Content-Type,Accept,Referer,token,User-Agent');
+   
     res.header('Access-Control-Allow-Methods', '*');
     res.header('Content-Type', 'application/json;charset=utf-8');
     let url = ['/centerFile', '/comment']
@@ -109,7 +110,7 @@ router.get('*', function(req, res) { // 对所有get请求处理
         }
     });
 })
-router.post('/sendEmail', (req, res) => {
+router.post('/api/sendEmail', (req, res) => {
     // 这里的req.body能够使用就在index.js中引入了const bodyParser = require('body-parser')
     var transporter = nodemailer.createTransport({
         host: 'smtp.163.com',
@@ -175,7 +176,7 @@ var verify = async function(data) {
     });
     return res
 }
-router.post('/queryIndexList', async(req, res) => {
+router.post('/api/queryIndexList', async(req, res) => {
     let centerFile = new mongoose.model('centerFile')
         //0查询返回自定字段，1不返回改字段
     centerFile.find({}, { title: 1, createTime: 1, titleImage: 1, content: 1, }, (ress, doc) => {
@@ -183,7 +184,7 @@ router.post('/queryIndexList', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/queryUserName', async(req, res) => {
+router.post('/api/queryUserName', async(req, res) => {
     let queryListName = []
     let responesObj = {}
     let body = req.body
@@ -197,7 +198,7 @@ router.post('/queryUserName', async(req, res) => {
     }
     res.send({ data: responesObj })
 })
-router.post('/singIn', async(req, res) => {
+router.post('/api/singIn', async(req, res) => {
     let body = req.body
     let responesObj = {}
     let sendEmail = mongoose.model('sendEmail');
@@ -237,7 +238,7 @@ router.post('/singIn', async(req, res) => {
     res.send({ data: responesObj })
 
 })
-router.post('/login', async(req, res) => {
+router.post('/api/login', async(req, res) => {
     let body = req.body
     let data
     let user = new mongoose.model('user')
@@ -260,7 +261,7 @@ router.post('/login', async(req, res) => {
     }
     res.send(data)
 })
-router.post('/centerFile', async(req, res) => {
+router.post('/api/centerFile', async(req, res) => {
     let body = req.body;
     let data
     let obj = {
@@ -286,7 +287,7 @@ router.post('/centerFile', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/img', (req, res) => {
+router.post('/api/img', (req, res) => {
     const form = new formidable.IncomingForm()
     form.encoding = 'utf-8';
     form.uploadDir = path.join(__dirname + "/img");
@@ -309,7 +310,7 @@ router.post('/img', (req, res) => {
         res.send({ data: "/img/" + avatarName, success: true })
     })
 })
-router.post('/queryDetail', async(req, res) => {
+router.post('/api/queryDetail', async(req, res) => {
     let centerFile = new mongoose.model('centerFile')
     centerFile.findById(req.body.id, (err, doc) => {
         if (err) return handleError(err);
@@ -317,7 +318,7 @@ router.post('/queryDetail', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/comment', async(req, res) => {
+router.post('/api/comment', async(req, res) => {
     let centerFile = new mongoose.model('comment')
     let obj = {
         time: new Date()
@@ -330,7 +331,7 @@ router.post('/comment', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/queryComment', (req, res) => {
+router.post('/api/queryComment', (req, res) => {
     let centerFile = new mongoose.model('comment')
     centerFile.find({ id: req.body.id }, (err, doc) => {
         if (err) return handleError(err);
@@ -338,7 +339,7 @@ router.post('/queryComment', (req, res) => {
         res.send(data)
     })
 })
-router.post('/music', (req, res) => {
+router.post('/api/music', (req, res) => {
     fs.readdir(__dirname + '/music', (err, files) => {
         let responses = {}
         if (err) {
