@@ -17,6 +17,15 @@ module.exports = {
             }
         }
     },
+    pwa: {
+        iconPaths: {
+            favicon32: 'favicon.ico',
+            favicon16: 'favicon.ico',
+            appleTouchIcon: 'favicon.ico',
+            maskIcon: 'favicon.ico',
+            msTileImage: 'favicon.ico'
+        }
+    },
     configureWebpack: ({
         plugins: [new CompressionPlugin({
             test: /\.js$|\.html$|\.css/,

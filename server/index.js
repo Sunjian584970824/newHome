@@ -1,4 +1,5 @@
 const express = require('express')
+const history = require('connect-history-api-fallback');
 const app = express()
 const api = require('./router');
 var bodyParser = require('body-parser')
