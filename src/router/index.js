@@ -2,7 +2,7 @@
 // import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 import { Message } from 'element-ui'
-
+import index from '@/components/index/index.vue'
 // 解决两次访问相同路由地址报错
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
@@ -17,8 +17,7 @@ var router = new VueRouter({
             meta: {
                 title: "首页",
             },
-            component: () =>
-                import ('@/components/index/index.vue')
+            component: index
         },
         {
             path: '/test',
