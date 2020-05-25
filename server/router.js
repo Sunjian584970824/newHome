@@ -214,7 +214,7 @@ router.post('/api/queryUserName', async(req, res) => {
         responesObj = respones(true, '', '')
 
     }
-    res.send({ data: responesObj })
+    res.send(  responesObj )
 })
 router.post('/api/singIn', async(req, res) => {
     let body = req.body
@@ -224,7 +224,7 @@ router.post('/api/singIn', async(req, res) => {
     emailObj = await util.find({ model: sendEmail, data: { email: body.email, testNum: body.code }, })
     if (emailObj.length === 0 || emailObj[0].email !== body.email) {
         responesObj = respones(false, emailObj, '验证码错误')
-        res.send({ data: responesObj })
+        res.send(  responesObj )
         return
     }
     let userModel = mongoose.model('user');
@@ -253,7 +253,7 @@ router.post('/api/singIn', async(req, res) => {
         responesObj.type = true,
             responesObj.message = '注册成功'
     }
-    res.send({ data: responesObj })
+    res.send(responesObj)
 
 })
 router.post('/api/login', async(req, res) => {
