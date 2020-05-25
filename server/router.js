@@ -12,21 +12,12 @@ const jwt = require('jsonwebtoken')
 const util = require('./util')
 const CodeExpiredTime = 60 //验证码过期时间
 var app = express()
-const Vue =require('vue')
-const vueServerRender =require('vue-server-renderer').createRenderer()
     /*
         code:
             501:登录过期,
             301:用户名已经被注册,
     */
-   const vueApp=new Vue({
-       data:{
-           message:'hello vue-ssr'
-       },
-       template:`<div>
-        <h1>{{message}}</h1>
-       </div>`
-   })
+
 var respones = function(type, value, message, code) {
     let obj = {
         success: type,
@@ -59,75 +50,69 @@ router.all('*', async(req, res, next) => {
 
     }
 });
-// router.get('*',(req,res)=>{
-//     console.log(res)
-//     res.status(200),
-//     res.setHeader('content-type','charset=utf-8;text/html')
-//     vueServerRender.renderToString(vueApp).then(html=>{console.log(html)}).catch(err=>{console.log(err)})
-//     res.send('ok')
-// })
+
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*'); //添加这句话就可以正常返回数据了
     next();
 })
-// router.get('*', function(req, res) { // 对所有get请求处理
-//     var pathname = __dirname + url.parse(req.url).pathname;
-//     if (path.extname(pathname) == "") {
-//         pathname += "/";
-//     }
-//     if (pathname.charAt(pathname.length - 1) == "/") {
-//         pathname += "index.html";
-//     }
-//     var arrayAll = [".html", ".js", ".css", ".gif", ".jpg", ".png", ".mp3", '.txt'];
-//     var str = '';
-//     if (req.params[0].indexOf('.') > 0) {
-//         var n = req.params[0].indexOf('.')
-//         str = req.params[0].slice(n, req.params[0].length)
-//     }
-//     if (arrayAll.includes(str)) { //  解决中文URL乱码问题
-//         pathname = __dirname + req.params[0];
-//     }
-//     fs.exists(pathname, function(exists) {
-//         if (exists) {
-//             // 'Content-Disposition': 'attachment'  资源下载表示
-//             switch (path.extname(pathname)) {
-//                 case ".html":
+router.get('*', function(req, res) { // 对所有get请求处理
+    var pathname = __dirname + url.parse(req.url).pathname;
+    if (path.extname(pathname) == "") {
+        pathname += "/";
+    }
+    if (pathname.charAt(pathname.length - 1) == "/") {
+        pathname += "index.html";
+    }
+    var arrayAll = [".html", ".js", ".css", ".gif", ".jpg", ".png", ".mp3", '.txt'];
+    var str = '';
+    if (req.params[0].indexOf('.') > 0) {
+        var n = req.params[0].indexOf('.')
+        str = req.params[0].slice(n, req.params[0].length)
+    }
+    if (arrayAll.includes(str)) { //  解决中文URL乱码问题
+        pathname = __dirname + req.params[0];
+    }
+    fs.exists(pathname, function(exists) {
+        if (exists) {
+            // 'Content-Disposition': 'attachment'  资源下载表示
+            switch (path.extname(pathname)) {
+                case ".html":
 
-//                     res.writeHead(200, { "Content-Type": "text/html" });
-//                     break;
-//                 case ".js":
-//                     res.writeHead(200, { "Content-Type": "text/javascript", 'Content-Disposition': 'attachment' });
-//                     break;
-//                 case ".css":
-//                     res.writeHead(200, { "Content-Type": "text/css" });
-//                     break;
-//                 case ".gif":
-//                     res.writeHead(200, { "Content-Type": "image/gif" });
-//                     break;
-//                 case ".jpg":
-//                     res.writeHead(200, { "Content-Type": "image/jpeg", 'Content-Disposition': 'attachment' });
-//                     break;
-//                 case ".png":
-//                     res.writeHead(200, { "Content-Type": "image/png" });
-//                     break;
-//                 case ".mp3":
-//                     res.writeHead(200, { "Content-Type": "audio/wav" });
-//                     break;
+                    res.writeHead(200, { "Content-Type": "text/html" });
+                    break;
+                case ".js":
+                    res.writeHead(200, { "Content-Type": "text/javascript", 'Content-Disposition': 'attachment' });
+                    break;
+                case ".css":
+                    res.writeHead(200, { "Content-Type": "text/css" });
+                    break;
+                case ".gif":
+                    res.writeHead(200, { "Content-Type": "image/gif" });
+                    break;
+                case ".jpg":
+                    res.writeHead(200, { "Content-Type": "image/jpeg", 'Content-Disposition': 'attachment' });
+                    break;
+                case ".png":
+                    res.writeHead(200, { "Content-Type": "image/png" });
+                    break;
+                case ".mp3":
+                    res.writeHead(200, { "Content-Type": "audio/wav" });
+                    break;
 
-//                 default:
-//                     res.writeHead(200, { "Content-Type": "application/octet-stream" });
-//             }
+                default:
+                    res.writeHead(200, { "Content-Type": "application/octet-stream" });
+            }
 
-//             fs.readFile(pathname, function(err, data) {
+            fs.readFile(pathname, function(err, data) {
 
-//                 res.end(data);
-//             });
-//         } else {
-//             res.writeHead(404, { "Content-Type": "text/html" });
-//             res.end("<h1>404 Not Found</h1>");
-//         }
-//     });
-// })
+                res.end(data);
+            });
+        } else {
+            res.writeHead(404, { "Content-Type": "text/html" });
+            res.end("<h1>404 Not Found</h1>");
+        }
+    });
+})
 router.post('/api/sendEmail', (req, res) => {
     // 这里的req.body能够使用就在index.js中引入了const bodyParser = require('body-parser')
     var transporter = nodemailer.createTransport({
