@@ -35,7 +35,8 @@ module.exports = {
         externals: { // 使用cdn的形式引入这些苦  减少vendor 打包体积，增加渲染熟读； cdn引入的标签写入body内
             'vue': 'Vue', //暴露变了Vue    
             'vue-router': 'VueRouter',
-            'element-ui': 'ELEMENT'
+            'element-ui': 'ELEMENT',
+            'vuex':'Vuex'
         },
         optimization: {
             concatenateModules: false,
