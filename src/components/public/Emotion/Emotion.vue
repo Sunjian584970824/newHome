@@ -49,7 +49,6 @@ export default {
 <style lang="less" scoped>
 .contenteditableBox {
     min-height: 440px;
-    max-width: 440px;
 
     svg {
         width: 24px;

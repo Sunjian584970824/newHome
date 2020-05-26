@@ -20,9 +20,10 @@
         >
           <h1>{{item.title}}</h1>
           <div class="itemContent">
-            <!-- <div class="image" v-if="item.titleImage">
+            <div class="image" v-if="item.titleImage">
               <img :src="item.titleImage" alt />
-            </div> -->
+              <!-- <img src="../../assets/logo.png" alt=""> -->
+            </div>
             <div class="titleContent">
               <mavon-editor
                 v-model="item.content"
@@ -373,7 +374,6 @@ export default {
 @media screen and (max-width: 768px) {
   // 小屏幕
   .content {
-    padding: 0 !important;
     .mainBox {
       width: 100% !important;
 
@@ -585,7 +585,7 @@ export default {
             white-space: pre;
             white-space: pre-wrap;
             white-space: pre-line;
-            width: 100%;
+
             .mavonEditor {
               box-shadow: none;
               min-height: 0;

@@ -1,19 +1,19 @@
 <template>
-<div style=" height: 100%;">
-    <div v-loading="loading" id="detail">
-        <div v-if="!isSmallScreen" class="flex1"></div>
-        <div class="box">
-            <mavon-editor class="mavonEditor" v-model="content" ref="md" :preview="true" boxShadowStyle="0 2px 12px 0 rgba(0, 0, 0, 0.1)" :subfield="false" :toolbarsFlag="false" :navigation="false" defaultOpen="preview" :shortCut="false" :editable="false" />
-        </div>
-        <div v-if="!isSmallScreen" class="flex1">
-            <div class="comment">
-                <div class="redBOX">
-                    <p v-for="(item,key) in commentDate" :key='key'><span class='user'>{{item.email || 'jack'}}:</span><span class='commentMessage' v-emotion>{{item.comment}}</span>
-                        <!-- <span class='sendMessage'>回复</span> -->
-                    </p>
-                </div>
-                <emtion @submit="submit"></emtion>
+<div v-loading="loading" id="detail">
+    <div class="flex1"></div>
+    <div class="box">
+        <mavon-editor class="mavonEditor" v-model="content" ref="md" :preview="true" boxShadowStyle="0 2px 12px 0 rgba(0, 0, 0, 0.1)" :subfield="false" :toolbarsFlag="false" :navigation="false" defaultOpen="preview" :shortCut="false" :editable="false" />
+
+    </div>
+    <div class="flex1">
+        <div class="comment">
+            <div class="redBOX">
+                <p v-for="(item,key) in commentDate" :key='key'><span class='user'>{{item.email || 'jack'}}:</span><span class='commentMessage' v-emotion>{{item.comment}}</span>
+                <!-- <span class='sendMessage'>回复</span> -->
+                 </p>
             </div>
+            <emtion @submit="submit"></emtion>
+
         </div>
     </div>
 </div>
@@ -118,11 +118,6 @@ export default {
     components: {
         mavonEditor,
         emtion
-    },
-    computed: {
-        isSmallScreen() {
-            return this.$store.state.isSmallScreen
-        }
     },
     mounted() {
         this.id = this.$route.params.id;
