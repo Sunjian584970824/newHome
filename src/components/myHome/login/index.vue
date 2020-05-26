@@ -7,7 +7,6 @@
         </div>
         <div class="user">
             <div class="box"></div>
-
         </div>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
             <div class='from'>
@@ -29,14 +28,12 @@
                     </el-form-item>
                     <el-form-item prop="password">
                         <el-input v-model="ruleForm.password" placeholder="请输入密码" :type='passwordText'></el-input>
-                        <!-- <i class='leftIcon el-icon-mobile-phone'></i> -->
                         <i class='leftIcon el-icon-edit-outline' style="z-index:22"></i>
                         <img class='rightIcon myIcon ' @click="seePwd('passwordText')" :src="passwordText==='text'?require('../../../assets/image/pwd_on.svg'):require('../../../assets/image/pwd_off.svg')" />
 
                     </el-form-item>
                     <el-form-item prop="passwordAgin" v-if='!isSingIn'>
                         <el-input class='fromInput' v-model="ruleForm.passwordAgin" :type='passwordAginText' placeholder="请再次输入密码"></el-input>
-                        <!-- <i class='leftIcon el-icon-mobile-phone'></i> -->
                         <i class='leftIcon el-icon-edit-outline' style="z-index:22"></i>
                         <img ref='image' class='rightIcon myIcon ' @click="seePwd('passwordAginText')" :src="passwordAginText==='text'?require('../../../assets/image/pwd_on.svg'):require('../../../assets/image/pwd_off.svg')" />
 
@@ -62,7 +59,9 @@
     <div v-else class='bigScrenn'>
         <div class="fle1"></div>
         <div class="centerBoxs">
-            <div class="box1"></div>
+            <div class="box1">
+                <img src="../../../assets/logo.png" alt="">
+            </div>
             <div class="flex1">
                 <div class='loginCenterBox'>
                     <div class='fat'>
@@ -87,7 +86,7 @@
                                     <img class='rightIconLg myIcon ' slot="suffix" @click="seePwd('passwordText')" :src="passwordText==='text'?require('../../../assets/image/pwd_on.svg'):require('../../../assets/image/pwd_off.svg')" />
                                 </el-input>
                             </el-form-item>
-                            <el-form-item label="确认密码" prop="passwordAgin">
+                            <el-form-item label="确认密码" prop="passwordAgin" v-if='!isSingIn'>
                                 <el-input v-model="ruleForm.passwordAgin" :type='passwordAginText' placeholder="请确认密码">
                                     <img class='rightIconLg myIcon ' slot="suffix" @click="seePwd('passwordAginText')" :src="passwordAginText==='text'?require('../../../assets/image/pwd_on.svg'):require('../../../assets/image/pwd_off.svg')" />
                                 </el-input>
@@ -161,7 +160,7 @@ export default {
             isEmail: true, //邮箱或者用户名登陆
             disabledBtn: false, //验证码按钮禁点
             ruleForm: {
-                email: '584970824@qq.com',
+                email: '',
                 code: '', //验证码
                 password: '123456', //密码
                 passwordAgin: '', //密码确认
@@ -218,7 +217,7 @@ export default {
                     userName: this.ruleForm.userName
                 }
             }).then(res => {
-                this.queryUserNameValue = res.data.data
+                this.queryUserNameValue = res.data
             })
         },
         loginMethod() {
@@ -232,6 +231,7 @@ export default {
         },
         userSingin() {
             var obj = {
+                userName: this.ruleForm.userName,
                 password: md5(this.ruleForm.password), //密码
                 email: this.ruleForm.email, //email
             }
@@ -243,11 +243,10 @@ export default {
                 url: 'api/' + methods,
                 data: obj
             }).then(res => {
-                      console.log(res,'666666666666666666666666')
-                if (res.data.data.value) {
-                    debugger
+                if (res.data.value) {
                     let user = {
                         email: this.ruleForm.email,
+                        userName: res.data.value.userName,
                         token: res.data.value.token
                     }
                     localStorage.setItem('token', res.data.value.token)
@@ -263,9 +262,8 @@ export default {
                         })
                     }
                 } else {
-              
                     this.$message({
-                        message: res.data.data.message,
+                        message: res.data.message,
                         type: 'error',
                         duration: 3 * 1000
                     })
@@ -446,7 +444,15 @@ export default {
             .box1 {
                 width: 30%;
                 background: #333;
-                height: 100%
+                height: 100%;
+                position: relative;
+
+                img {
+                    width: 50%;
+                    position: absolute;
+                    left: 50%;
+                    transform: translate(-50%, 61px);
+                }
             }
 
             .flex1 {

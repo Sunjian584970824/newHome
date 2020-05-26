@@ -439,6 +439,7 @@ export default {
       padding: 10px;
       box-sizing: border-box;
       height: 170px !important;
+      overflow: hidden;
 
       svg:hover {
         cursor: pointer;
@@ -460,7 +461,7 @@ export default {
 
     .takBox {
       // height: 100%;
-      max-height: calc(100% - 230px);
+      max-height: calc(100% - 290px);
       overflow: hidden;
       width: 100%;
       box-sizing: border-box;

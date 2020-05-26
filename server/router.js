@@ -12,13 +12,13 @@ const jwt = require('jsonwebtoken')
 const util = require('./util')
 const CodeExpiredTime = 60 //验证码过期时间
 var app = express()
-    /*
-        code:
-            501:登录过期,
-            301:用户名已经被注册,
-    */
+/*
+    code:
+        501:登录过期,
+        301:用户名已经被注册,
+*/
 
-var respones = function(type, value, message, code) {
+var respones = function (type, value, message, code) {
     let obj = {
         success: type,
         value: value,
@@ -27,11 +27,11 @@ var respones = function(type, value, message, code) {
     }
     return obj
 }
-router.all('*', async(req, res, next) => {
+router.all('*', async (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
     res.header('Access-Control-Allow-Headers', 'Content-Type,Accept,Referer,token,User-Agent');
-   
+
     res.header('Access-Control-Allow-Methods', '*');
     res.header('Content-Type', 'application/json;charset=utf-8');
     // res.header('Content-Type', 'application/json;charset=utf-8');
@@ -51,11 +51,11 @@ router.all('*', async(req, res, next) => {
     }
 });
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*'); //添加这句话就可以正常返回数据了
     next();
 })
-router.get('*', function(req, res) { // 对所有get请求处理
+router.get('*', function (req, res) { // 对所有get请求处理
     var pathname = __dirname + url.parse(req.url).pathname;
     if (path.extname(pathname) == "") {
         pathname += "/";
@@ -72,7 +72,7 @@ router.get('*', function(req, res) { // 对所有get请求处理
     if (arrayAll.includes(str)) { //  解决中文URL乱码问题
         pathname = __dirname + req.params[0];
     }
-    fs.exists(pathname, function(exists) {
+    fs.exists(pathname, function (exists) {
         if (exists) {
             // 'Content-Disposition': 'attachment'  资源下载表示
             switch (path.extname(pathname)) {
@@ -103,7 +103,7 @@ router.get('*', function(req, res) { // 对所有get请求处理
                     res.writeHead(200, { "Content-Type": "application/octet-stream" });
             }
 
-            fs.readFile(pathname, function(err, data) {
+            fs.readFile(pathname, function (err, data) {
 
                 res.end(data);
             });
@@ -149,7 +149,7 @@ router.post('/api/sendEmail', (req, res) => {
             saveEmail.save((e, doc) => {
                 if (e) return handleError(e);
                 transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {} else {
+                    if (error) { } else {
                         response = respones(true, code, '验证码已发送值邮箱，请查看')
                         res.send(response)
                     }
@@ -172,22 +172,22 @@ router.post('/api/sendEmail', (req, res) => {
     })
 
 })
-var verify = async function(data) {
+var verify = async function (data) {
     let res
-    await jwt.verify(data.token, data.ssk, function(err, decoded) {
+    await jwt.verify(data.token, data.ssk, function (err, decoded) {
         res = err ? true : false
     });
     return res
 }
-router.post('/api/queryIndexList', async(req, res) => {
+router.post('/api/queryIndexList', async (req, res) => {
     let centerFile = new mongoose.model('centerFile')
-        //0查询返回自定字段，1不返回改字段
+    //0查询返回自定字段，1不返回改字段
     centerFile.find({}, { title: 1, createTime: 1, titleImage: 1, content: 1, }, (ress, doc) => {
         let data = respones(true, { doc }, '')
         res.send(data)
     })
 })
-router.post('/api/queryUserName', async(req, res) => {
+router.post('/api/queryUserName', async (req, res) => {
     let queryListName = []
     let responesObj = {}
     let body = req.body
@@ -199,9 +199,9 @@ router.post('/api/queryUserName', async(req, res) => {
         responesObj = respones(true, '', '')
 
     }
-    res.send(  responesObj )
+    res.send(responesObj)
 })
-router.post('/api/singIn', async(req, res) => {
+router.post('/api/singIn', async (req, res) => {
     let body = req.body
     let responesObj = {}
     let sendEmail = mongoose.model('sendEmail');
@@ -209,7 +209,7 @@ router.post('/api/singIn', async(req, res) => {
     emailObj = await util.find({ model: sendEmail, data: { email: body.email, testNum: body.code }, })
     if (emailObj.length === 0 || emailObj[0].email !== body.email) {
         responesObj = respones(false, emailObj, '验证码错误')
-        res.send(  responesObj )
+        res.send(responesObj)
         return
     }
     let userModel = mongoose.model('user');
@@ -224,7 +224,7 @@ router.post('/api/singIn', async(req, res) => {
 
     } else {
         let ssk = body.email
-            // let ssk=fs.readFileSync('./privkey.pem')
+        // let ssk=fs.readFileSync('./privkey.pem')
         var token = jwt.sign({ foo: 'bar', exp: Math.floor(Date.now() / 1000) + (60 * 60), }, ssk);
         let user = new userModel({
             password: body.password, //密码
@@ -241,7 +241,7 @@ router.post('/api/singIn', async(req, res) => {
     res.send(responesObj)
 
 })
-router.post('/api/login', async(req, res) => {
+router.post('/api/login', async (req, res) => {
     let body = req.body
     let data
     let user = new mongoose.model('user')
@@ -250,36 +250,44 @@ router.post('/api/login', async(req, res) => {
     let userObj = await util.find({ model: user, data: params })
     if (userObj.length === 0) {
         data = respones(false, '', '邮箱或密码错误')
+    res.send(data)
+
     } else if (userObj[0].isDelete) {
         data = respones(false, '', '该账户已经注销')
+    res.send(data)
+
     } else {
         let ssk = body.email
+        let emailObj = await util.find({ model: user, data: { email: body.email }, })
+        emailObj = emailObj.length > 0 ? emailObj[0] : {}
         var token = jwt.sign({ foo: 'bar', exp: Math.floor(Date.now() / 1000) + (60 * 60), }, ssk);
-        await user.update({ params, sessionToken: token }, (err) => {
+        await user.update({ params, sessionToken: token }, (err, state) => {
             if (err) return handleError(err)
             else {
-                data = respones(true, { token: token }, '登录成功')
+
+                data = respones(true, { token: token, userName: emailObj.userName }, '登录成功')
+                res.send(data)
+
             }
         })
     }
-    res.send(data)
 })
-router.post('/api/centerFile', async(req, res) => {
+router.post('/api/centerFile', async (req, res) => {
     let body = req.body;
     let data
     let obj = {
-            title: body.title, //标题
-            createTime: new Date(), //创建时间
-            content: body.content, //内容
-            email: body.email,
-            titleImage: body.titleImage,
-        }
-        // let isverify = verify({ token: req.headers.token, ssk: body.email })
-        // data = respones(false, {}, 'token过期，请重新登录')
-        // if (isverify) {
-        //     res.send(data)
-        //     return
-        // }
+        title: body.title, //标题
+        createTime: new Date(), //创建时间
+        content: body.content, //内容
+        email: body.email,
+        titleImage: body.titleImage,
+    }
+    // let isverify = verify({ token: req.headers.token, ssk: body.email })
+    // data = respones(false, {}, 'token过期，请重新登录')
+    // if (isverify) {
+    //     res.send(data)
+    //     return
+    // }
 
     let centerFile = new mongoose.model('centerFile')
     let saveCenterFile = new centerFile(obj)
@@ -297,7 +305,7 @@ router.post('/api/img', (req, res) => {
     form.keepExtensions = true; //保留后缀
     form.maxFieldsSize = 2 * 1024 * 1024;
     // form.uploadDir = "./uploads";
-    form.parse(req, function(err, frelds, files) {
+    form.parse(req, function (err, frelds, files) {
         var filename = files.image.name
         var nameArray = filename.split('.');
         var type = nameArray[nameArray.length - 1];
@@ -313,7 +321,7 @@ router.post('/api/img', (req, res) => {
         res.send({ data: "/img/" + avatarName, success: true })
     })
 })
-router.post('/api/queryDetail', async(req, res) => {
+router.post('/api/queryDetail', async (req, res) => {
     let centerFile = new mongoose.model('centerFile')
     centerFile.findById(req.body.id, (err, doc) => {
         if (err) return handleError(err);
@@ -321,7 +329,7 @@ router.post('/api/queryDetail', async(req, res) => {
         res.send(data)
     })
 })
-router.post('/api/comment', async(req, res) => {
+router.post('/api/comment', async (req, res) => {
     let centerFile = new mongoose.model('comment')
     let obj = {
         time: new Date()

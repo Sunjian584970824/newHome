@@ -209,7 +209,6 @@ body,
         width: 1000px;
         margin: auto;
         display: flex;
-
         .titleTab {
             padding: 0 20px;
 
@@ -239,12 +238,15 @@ body,
         .user {
             height: 50px;
             width: 52px;
-            border-radius: 50%;
+            // border-radius: 50%;
             overflow: hidden;
-
             //   box-shadow: 3px 3px   3px rgba(0,0,0,.2);
+            position: relative;
             img {
-                width: 100%
+                width: 100%;
+                position:absolute;
+                top:50%;
+                transform: translateY(-50%);
             }
         }
     }
@@ -295,7 +297,7 @@ body,
         .user {
             width: 50px;
             height: 50px;
-            border-radius: 50%;
+            // border-radius: 50%;
             overflow: hidden;
 
             img {
