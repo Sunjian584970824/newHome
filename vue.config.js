@@ -1,5 +1,6 @@
 const CompressionPlugin = require('compression-webpack-plugin');
 let url = 'http://10.120.1.171:3000' || 'http://47.93.117.110:3000'
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 module.exports = {
     lintOnSave: false,
     productionSourceMap: false,
@@ -31,7 +32,7 @@ module.exports = {
             test: /\.js$|\.html$|\.css/,
             threshold: 1000,
             deleteOriginalAssets: false
-        })],
+        }),new BundleAnalyzerPlugin()],
         externals: { // 使用cdn的形式引入这些苦  减少vendor 打包体积，增加渲染熟读； cdn引入的标签写入body内
             'vue': 'Vue', //暴露变了Vue    
             'vue-router': 'VueRouter',
