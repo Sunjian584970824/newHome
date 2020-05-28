@@ -135,20 +135,22 @@ export default {
 
             }
         }
-        var userNameRule = async function (rule, value, callback) {
+        var userNameRule = function (rule, value, callback) {
 
             if (!(value.toString())) {
                 console.log(value.toString())
                 return callback(new Error('请输入用户名'));
             } else {
-                await _this.queryUserName()
+                _this.queryUserName().then(() => {
 
-                if (_this.queryUserNameValue.code === 301) {
-                    return callback(new Error('用户名已被使用'));
-                } else {
-                    return callback();
+                    if (_this.queryUserNameValue.code === 301) {
+                        return callback(new Error('用户名已被使用'));
+                    } else {
+                        return callback();
 
-                }
+                    }
+                })
+
             }
         }
         return {
@@ -162,7 +164,7 @@ export default {
             ruleForm: {
                 email: '',
                 code: '', //验证码
-                password: '123456', //密码
+                password: '', //密码
                 passwordAgin: '', //密码确认
                 userName: ''
             },
@@ -211,13 +213,16 @@ export default {
 
     methods: {
         queryUserName() {
-            this.$axios({
-                url: 'api/queryUserName',
-                data: {
-                    userName: this.ruleForm.userName
-                }
-            }).then(res => {
-                this.queryUserNameValue = res.data
+            return new Promise((resolve, reject) => {
+                this.$axios({
+                    url: 'api/queryUserName',
+                    data: {
+                        userName: this.ruleForm.userName
+                    }
+                }).then(res => {
+                    this.queryUserNameValue = res.data
+                    resolve()
+                })
             })
         },
         loginMethod() {

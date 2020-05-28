@@ -132,6 +132,8 @@ export default {
                 }
             }).then(res => {
                 this.commentDate = res.data.value.doc
+                this.loading = false;
+
             })
         },
         submit(inner) {
@@ -148,27 +150,24 @@ export default {
             })
         },
 
-        async queryDetail() {
+         queryDetail(){
             let res
-            await this.$axios({
+             this.$axios({
                 url: "api/queryDetail",
                 data: {
                     id: this.id
                 }
             }).then(rescode => {
-                res = rescode
-            });
-            if (res.data.success) {
+             if (res.data.success) {
                 this.content =
                     res.data.success && res.data.value.doc ?
                     res.data.value.doc.content :
                     "";
-                await this.queryComment()
+                 this.queryComment()
             }
+            });
+            
 
-            setTimeout(() => {
-                this.loading = false;
-            }, 500)
         }
     }
 };

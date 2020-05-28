@@ -10,60 +10,61 @@ VueRouter.prototype.push = function push(location) {
 var router = new VueRouter({
     mode: 'history',
     routes: [{
-            path: '/',
-            name: 'index',
-            meta: {
-                title: "首页",
-            },
-            component: index
+        path: '/',
+        name: 'index',
+        meta: {
+            title: "首页",
         },
-        {
-            path: '/test',
-            name: 'test',
-            meta: {
-                title: "发布",
-                loginAuth: true,
-            },
-            component: () =>
-                import ('@/components/test/index.vue')
+        component: () =>
+            import('@/components/index/index.vue')
+    },
+    {
+        path: '/test',
+        name: 'test',
+        meta: {
+            title: "发布",
+            loginAuth: true,
         },
-        {
-            path: '/suggest',
-            name: 'suggest',
-            meta: {
-                title: "发布",
-                loginAuth: true,
-            },
-            component: () =>
-                import ('@/components/suggest/index.vue')
+        component: () =>
+            import('@/components/test/index.vue')
+    },
+    {
+        path: '/suggest',
+        name: 'suggest',
+        meta: {
+            title: "发布",
+            loginAuth: true,
         },
-        {
-            path: '/music',
-            name: 'music',
-            meta: {
-                title: "音乐",
-            },
-            component: () =>
-                import ('@/components/music/index.vue')
+        component: () =>
+            import('@/components/suggest/index.vue')
+    },
+    {
+        path: '/music',
+        name: 'music',
+        meta: {
+            title: "音乐",
         },
-        {
-            path: '/myHome',
-            name: 'myHome',
-            meta: {
-                title: "个人中心",
-            },
-            component: () =>
-                import ('@/components/myHome/index.vue')
+        component: () =>
+            import('@/components/music/index.vue')
+    },
+    {
+        path: '/myHome',
+        name: 'myHome',
+        meta: {
+            title: "个人中心",
         },
-        {
-            path: '/detail/:id',
-            name: 'detail',
-            meta: {
-                title: "技术详情",
-            },
-            component: () =>
-                import ('@/components/detail/index.vue')
+        component: () =>
+            import('@/components/myHome/index.vue')
+    },
+    {
+        path: '/detail/:id',
+        name: 'detail',
+        meta: {
+            title: "技术详情",
         },
+        component: () =>
+            import('@/components/detail/index.vue')
+    },
     ]
 })
 router.beforeEach((to, from, next) => {

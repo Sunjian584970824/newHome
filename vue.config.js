@@ -2,7 +2,7 @@ const CompressionPlugin = require('compression-webpack-plugin');
 let url = 'http://10.120.1.171:3000' || 'http://47.93.117.110:3000'
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 module.exports = {
-    lintOnSave: false,
+    lintOnSave: true,
     productionSourceMap: false,
     devServer: {
         proxy: {

@@ -1,5 +1,5 @@
 <template>
-<div id="app">
+<div id="app" v-loading='loading'>
     <div class="header " v-if='active===`我`?!isSmallScreen:true'>
         <div class="headerBox lgBox ">
             <div class='user'>
@@ -36,6 +36,7 @@
             </div>
         </div>
     </div>
+    <move></move>
     <router-view class='contentBox' :isSmallScreen='isSmallScreen'></router-view>
     <div class='footer smBox' v-if='active===`我`?!isSmallScreen:true' ref='footer'>
         <div class="footerItem" @click='checkRoute("首页")'> 首页 </div>
@@ -50,10 +51,15 @@
 </template>
 
 <script>
+import move from './move'
 export default {
     name: 'app',
+    components: {
+        move
+    },
     data() {
         return {
+            loading: true,
             searchText: "",
             active: "首页", //当前header状态
             isSmallScreen: true, //当前是否是小屏幕
@@ -63,12 +69,23 @@ export default {
     },
     watch: {
         '$route'(data) {
-            this.active = data.meta.title
+            this.$nextTick(() => {
+                this.active = data.meta.title,
+                    this.loading = false
+            })
         },
 
     },
+    //   watch:{
+    //     $route:{
+    //         handler:(val,oldVal)=>{
+    //          this.active = data.meta.title
+    //          this.loading = data.meta.title
+    //         }
+    //     },
+    //     deep:true
+    // },
     mounted() {
-
         var _this = this
         this.Screen()
         window.onresize = () => {
@@ -83,9 +100,18 @@ export default {
             //     style = routeArray.includes(route) ? 'none' : height <= 768 ? 'flex' : 'none' // 如果当前页面 是suggest 则不显示底部footer否则显示
             //     _this.$refs.footer.style.display = style
         }
+      
         this.Screen()
     },
+
     methods: {
+        test(data, str) {
+            if (!data || JSON.stringify(data) === '{}' || !str) {
+                return undefined
+            } else {
+              
+            }
+        },
         isSugesst() {
             console.log(this.$route.path)
             if (this.$route.path === '/') {
@@ -96,10 +122,10 @@ export default {
                     this.$store.commit('isSugesst', true)
                     this.$store.commit('mainBox', true)
                 }
-            }else{
+            } else {
                 this.$router.push('/')
-                      this.$store.commit('isSugesst', true)
-                    this.$store.commit('mainBox', false)
+                this.$store.commit('isSugesst', true)
+                this.$store.commit('mainBox', false)
             }
 
         },
@@ -146,15 +172,15 @@ export default {
                     route = el.path
                 }
             })
-              console.log(route)
+            console.log(route)
 
-             if(route==='/' &&this.isSmallScreen){
-                 console.log('首页首页首页首页首页首页首页首页首页首页首页首页首页首页首页首页')
-                      this.$store.commit('isSugesst', false)
-                    this.$store.commit('mainBox', true)
+            if (route === '/' && this.isSmallScreen) {
+                console.log('首页首页首页首页首页首页首页首页首页首页首页首页首页首页首页首页')
+                this.$store.commit('isSugesst', false)
+                this.$store.commit('mainBox', true)
             }
             this.$router.push(route)
-           
+
         }
     },
 
@@ -209,6 +235,7 @@ body,
         width: 1000px;
         margin: auto;
         display: flex;
+
         .titleTab {
             padding: 0 20px;
 
@@ -242,10 +269,11 @@ body,
             overflow: hidden;
             //   box-shadow: 3px 3px   3px rgba(0,0,0,.2);
             position: relative;
+
             img {
                 width: 100%;
-                position:absolute;
-                top:50%;
+                position: absolute;
+                top: 50%;
                 transform: translateY(-50%);
             }
         }
