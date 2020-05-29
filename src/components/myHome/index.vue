@@ -19,7 +19,8 @@ export default {
         }
     },
     created() {
-           this.sessionToken= localStorage.getItem('token')
+        let user=localStorage.getItem('user')
+           this.sessionToken= user?JSON.parse(user):''
     },
 }
 </script>
