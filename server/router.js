@@ -172,6 +172,7 @@ router.post('/api/sendEmail', (req, res) => {
     })
 
 })
+
 var verify = async function (data) {
     let res
     await jwt.verify(data.token, data.ssk, function (err, decoded) {
@@ -182,8 +183,17 @@ var verify = async function (data) {
 router.post('/api/queryIndexList', async (req, res) => {
     let centerFile = new mongoose.model('centerFile')
     //0查询返回自定字段，1不返回改字段
-    centerFile.find({}, { title: 1, createTime: 1, titleImage: 1, content: 1, }, (ress, doc) => {
+    centerFile.find({isDelete:false}, { title: 1, createTime: 1, titleImage: 1, content: 1, }, (ress, doc) => {
         let data = respones(true, { doc }, '')
+        res.send(data)
+    })
+})
+router.post('/api/updateText', (req, res) => {
+    let centerFile = new mongoose.model('centerFile')
+    centerFile.update({ id: req.body.id }, { content: req.body.content, title: req.body.title }, (err, raw) => {
+
+        if (err) return handleError(err);
+        let data = respones(true, { raw }, '成功')
         res.send(data)
     })
 })
@@ -250,11 +260,11 @@ router.post('/api/login', async (req, res) => {
     let userObj = await util.find({ model: user, data: params })
     if (userObj.length === 0) {
         data = respones(false, '', '邮箱或密码错误')
-    res.send(data)
+        res.send(data)
 
     } else if (userObj[0].isDelete) {
         data = respones(false, '', '该账户已经注销')
-    res.send(data)
+        res.send(data)
 
     } else {
         let ssk = body.email
@@ -272,6 +282,7 @@ router.post('/api/login', async (req, res) => {
         })
     }
 })
+
 router.post('/api/centerFile', async (req, res) => {
     let body = req.body;
     let data
@@ -359,6 +370,23 @@ router.post('/api/music', (req, res) => {
             responses = respones(true, files, '')
         }
         res.send(responses)
+    })
+})
+router.post('/api/myText', (req, res) => {
+    let centerFile = new mongoose.model('centerFile')
+    centerFile.find({ email: req.body.email ,isDelete:false}, (err, doc) => {
+        if (err) return handleError(err);
+        let data = respones(true, { doc }, '成功')
+        res.send(data)
+    })
+})
+router.post('/api/delete', (req, res) => {
+    let centerFile = new mongoose.model('centerFile')
+    console.log(req.body)
+    centerFile.findByIdAndUpdate(req.body.id, { isDelete:true }, (err, raw) => {
+        if (err) return handleError(err);
+        let data = respones(true, { raw }, '成功')
+        res.send(data)
     })
 })
 module.exports = router;

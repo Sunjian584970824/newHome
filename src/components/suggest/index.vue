@@ -1,14 +1,13 @@
 <template>
-
 <div class="suggest">
-    <div  class="suggest">
-    <input class="titleInput" type="text" v-model="title" placeholder="标题" />
-    <mavon-editor v-model="content" :subfield="toolbars.subfield" :toolbars="toolbars" ref="md" @imgAdd="imgAdd" @change="changefocus" @imgDel="imgDel" />
-    <div class="submitBox lgBox" style="display:flex;padding-top:15px;">
-        <div style="flex:1"></div>
-        <el-button>暂存草稿</el-button>
-        <el-button @click="submit">提交</el-button>
-           </div>
+    <div class="suggest">
+        <input class="titleInput" type="text" v-model="title" placeholder="标题" />
+        <mavon-editor v-model="content" :subfield="toolbars.subfield" :toolbars="toolbars" ref="md" @imgAdd="imgAdd" @change="changefocus" @imgDel="imgDel" />
+        <div class="submitBox lgBox" style="display:flex;padding-top:15px;">
+            <div style="flex:1"></div>
+            <el-button>暂存草稿</el-button>
+            <el-button ref='saveSubmit' @click="submit">提交</el-button>
+        </div>
     </div>
 </div>
 </template>
@@ -24,6 +23,10 @@ export default {
         isSmallScreen: {
             default: true,
             type: Boolean
+        },
+        isSaveMethod: {
+            default: false,
+            type: Boolean
         }
     },
     components: {
@@ -33,7 +36,7 @@ export default {
         return {
             title: '',
             content: "",
-            titleImage:'',
+            titleImage: '',
             //https://www.npmjs.com/package/mavon-editor  api使用帮助
             // toolbarsFlag:true,//是否显示工具栏
             toolbars: {
@@ -75,6 +78,9 @@ export default {
         };
     },
     watch: {
+        isSaveMethod() {
+            this.submit()
+        },
         isSmallScreen(data) {
             //小屏幕下编辑的状态
             this.$set(this.toolbars, "subfield", !data);
@@ -89,21 +95,34 @@ export default {
             if (message) {
                 this.$message.error(message);
             } else {
-              let user=JSON.parse(localStorage.getItem('user')) 
+                let user = JSON.parse(localStorage.getItem('user'))
                 let obj = {
                     title: this.title,
                     content: this.content,
-                    email:user.email,
-                    titleImage:this.titleImage
+                    email: user.email,
+                    titleImage: this.titleImage
                 }
+                let url = this.$route.query.isEidet ? 'api/updateText' : 'api/centerFile';
                 this.$axios({
-                    url: 'api/centerFile',
+                    url: url,
                     data: obj
                 }).then(res => {
-                  
+                    if (res.data.code === 200) {
+                        this.$notify({
+                            title: '成功',
+                            message: '保存成功',
+                            type: 'success'
+                        });
+                    } else {
+                        this.$notify.error({
+                            title: '错误',
+                            message: res.data.message
+                        });
+                    }
                 })
             }
         },
+
         changefocus() {
             let u = navigator.userAgent,
                 app = navigator.appVersion;
@@ -132,15 +151,17 @@ export default {
             this.src = url
             var param = new FormData(); //创建form对象
             param.append('image', el, el.name); //通过append向form对象添加数据
-          
+
             this.$axios({
                 url: 'api/img',
                 data: param,
-                headers: { 'Content-Type': 'multipart/form-data'}
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             }).then(res => {
                 this.$refs.md.$img2Url(e, `${this.$locationUrls}${res.data}`);
-                if(!this.titleImage){
-                this.titleImage=`${this.$locationUrls}${res.data}`
+                if (!this.titleImage) {
+                    this.titleImage = `${this.$locationUrls}${res.data}`
                 }
             })
         },
@@ -153,6 +174,18 @@ export default {
             this.$set(this.toolbars, "trash", !data);
             this.$set(this.toolbars, "fullscreen", !data);
         }
+    },
+
+    created() {
+        if (this.$route.query.isEidet) {
+            let content = sessionStorage.getItem('edidt')
+            content = content ? JSON.parse(content) : content;
+            this.content = content.content
+            this.title = content.title
+        } else {
+            sessionStorage.clear('edidt')
+        }
+
     },
     mounted() {
         this.ScreenChange();
@@ -194,10 +227,12 @@ export default {
 .suggest {
     padding: 24px;
     box-sizing: border-box;
-    overflow:unset;
-    .suggest{
-        height:100%
+    overflow: unset;
+
+    .suggest {
+        height: 100%
     }
+
     .titleInput {
         border: none;
         width: 100%;

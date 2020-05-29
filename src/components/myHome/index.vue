@@ -19,7 +19,7 @@ export default {
         }
     },
     created() {
-
+           this.sessionToken= localStorage.getItem('token')
     },
 }
 </script>

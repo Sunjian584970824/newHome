@@ -1,11 +1,11 @@
 <template>
 <div v-loading="loading" id="detail">
-    <div class="flex1"></div>
+    <div class="flex1" v-if='!isSmallScreen'></div >
     <div class="box">
         <mavon-editor class="mavonEditor" v-model="content" ref="md" :preview="true" boxShadowStyle="0 2px 12px 0 rgba(0, 0, 0, 0.1)" :subfield="false" :toolbarsFlag="false" :navigation="false" defaultOpen="preview" :shortCut="false" :editable="false" />
 
     </div>
-    <div class="flex1">
+    <div class="flex1" v-if='!isSmallScreen'>
         <div class="comment">
             <div class="redBOX">
                 <p v-for="(item,key) in commentDate" :key='key'><span class='user'>{{item.email || 'jack'}}:</span><span class='commentMessage' v-emotion>{{item.comment}}</span>
@@ -108,7 +108,7 @@ import "mavon-editor/dist/css/index.css";
 export default {
     data() {
         return {
-            content: "asfsfsdf",
+            content: "",
             id: "",
             loading: true,
             comment: '',
@@ -118,6 +118,9 @@ export default {
     components: {
         mavonEditor,
         emtion
+    },
+    computed: {
+        isSmallScreen(){return this.$store.state.isSmallScreen}
     },
     mounted() {
         this.id = this.$route.params.id;
@@ -157,7 +160,7 @@ export default {
                 data: {
                     id: this.id
                 }
-            }).then(rescode => {
+            }).then(res => {
              if (res.data.success) {
                 this.content =
                     res.data.success && res.data.value.doc ?

@@ -44,6 +44,11 @@ const centerFile = mongoose.Schema({
     content: String, //内容
     email: String,
     titleImage: String,
+  
+    isDelete: { //位置信息
+        type: Boolean,
+        default: false
+    }
 
 });
 const comment = mongoose.Schema({
@@ -61,7 +66,7 @@ const comment = mongoose.Schema({
     /************** 定义模型Model **************/
 const Models = {
     user: mongoose.model('user', user),
-    user: mongoose.model('comment', comment),
+    comment: mongoose.model('comment', comment),
     sendEmail: mongoose.model('sendEmail', sendEmail),
     centerFile: mongoose.model('centerFile', centerFile)
 }

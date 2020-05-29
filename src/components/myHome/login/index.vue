@@ -1,5 +1,6 @@
 <template>
-<div id="login">
+<div id="login" >
+  
     <div class='isSmallScreen' v-if="isSmallScreen">
         <div class="header ">
             <i class="el-icon-arrow-left" @click="$goback"></i>
@@ -154,6 +155,7 @@ export default {
             }
         }
         return {
+            isLogin: {},
             queryUserNameValue: {},
             passwordAginText: 'password',
             passwordText: 'password',
@@ -206,9 +208,8 @@ export default {
     },
     mounted() {
         _this = this
-        // if(this.$route.query.redirect){
-        //   this.$message.error('您未登录，请登录');
-        // }
+        let user = localStorage.getItem('user')
+        this.isLogin = user ? JSON.parse(user) : {}
     },
 
     methods: {
@@ -226,7 +227,6 @@ export default {
             })
         },
         loginMethod() {
-            console.log(this.$refs.ruleForm)
             this.$refs.ruleForm.validate(validate => {
                 if (validate) {
                     this.userSingin()
@@ -316,6 +316,17 @@ export default {
 
 <style lang="less">
 #login {
+    .islogin {
+        width: 100%;
+        height: 100%;
+        background: rgba(225, 225, 225, 0.01);
+       
+        .h1 {
+            text-align: center;
+            line-height: 60px;
+        }
+    }
+
     .el-form-item__content {
         justify-content: center;
         align-content: center;

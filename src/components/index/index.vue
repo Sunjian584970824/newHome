@@ -1,5 +1,5 @@
 <template>
-<div class="content" id="index">
+<div class="content" id="index" >
     <!-- 
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js'></script>-->
@@ -13,21 +13,20 @@
                 <span :class="{'active':titleITem==='更多'}" @click="titleITem='更多'">前端交流圈</span>
         </div>-->
             <div class="contentItem" v-for="(item,key) in contentList " :key="key" @click="clickDetail(item)">
-                <!-- <h1>{{item.title}}</h1> -->
+                <h1>{{item.title}}</h1>
                 <div class="itemContent">
-                    <div class="image" v-if="item.titleImage">
+                    <!-- <div class="image" v-if="item.titleImage">
                         <img :src="item.titleImage" alt />
-                        <!-- <img src="../../assets/logo.png" alt=""> -->
-                    </div>
+                    </div> -->
                     <div class="titleContent">
                         <mavon-editor v-model="item.content" :imageFilter="imageFilter" class="mavonEditor" boxShadowStyle="none" defaultOpen="preview" ref="md" :subfield="false" :toolbarsFlag="false" :navigation="false" :shortCut="false" :editable="false" />
                     </div>
                 </div>
-                <div class="bottom">
+                <!-- <div class="bottom">
                     <span>赞</span>
                     <span>赞</span>
                     <span>赞</span>
-                </div>
+                </div> -->
             </div>
             <!-- <div class="contentItem" v-for="(item,key) in contentList " :key='key' @click="clickDetail">
                 <h1>奇门遁甲基础符号大全，一篇文章就够了</h1>
@@ -352,6 +351,9 @@ export default {
 @media screen and (max-width: 768px) {
 
     // 小屏幕
+    #index{
+        padding: 0;
+    }
     .content {
         .mainBox {
             width: 100% !important;
@@ -481,7 +483,7 @@ export default {
             .noMore {
                 text-align: center;
                 line-height: 50px;
-                margin-bottom: 100px;
+                margin-bottom: 140px;
             }
 
             .bottom {

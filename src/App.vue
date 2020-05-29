@@ -37,11 +37,11 @@
         </div>
     </div>
     <move></move>
-    <router-view class='contentBox' :isSmallScreen='isSmallScreen'></router-view>
+    <router-view class='contentBox' :isSmallScreen='isSmallScreen' :isSaveMethod='isSaveMethod'></router-view>
     <div class='footer smBox' v-if='active===`我`?!isSmallScreen:true' ref='footer'>
         <div class="footerItem" @click='checkRoute("首页")'> 首页 </div>
         <div class="footerItem" @click='checkRoute("发布")'> 发布 </div>
-        <div class="footerItem" style='flex:1;text-align: center' v-if="CanEidet.includes($route.name)"> 保存 </div>
+        <div class="footerItem" style='flex:1;text-align: center' @click="isSaveMethod=!isSaveMethod" v-if="CanEidet.includes($route.name)"> 保存 </div>
         <div class="footerItem" style='flex:1;text-align: center' v-else @click="isSugesst()"> + </div>
         <div class="footerItem" @click='checkRoute("音乐")'> 音乐 </div>
         <div class="footerItem" @click='checkRoute("个人中心")'> 我的 </div>
@@ -59,6 +59,7 @@ export default {
     },
     data() {
         return {
+            isSaveMethod:false,
             loading: true,
             searchText: "",
             active: "首页", //当前header状态
@@ -105,13 +106,7 @@ export default {
     },
 
     methods: {
-        test(data, str) {
-            if (!data || JSON.stringify(data) === '{}' || !str) {
-                return undefined
-            } else {
-              
-            }
-        },
+    
         isSugesst() {
             console.log(this.$route.path)
             if (this.$route.path === '/') {
@@ -172,10 +167,8 @@ export default {
                     route = el.path
                 }
             })
-            console.log(route)
 
             if (route === '/' && this.isSmallScreen) {
-                console.log('首页首页首页首页首页首页首页首页首页首页首页首页首页首页首页首页')
                 this.$store.commit('isSugesst', false)
                 this.$store.commit('mainBox', true)
             }
