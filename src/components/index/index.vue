@@ -1,5 +1,5 @@
 <template>
-<div class="content" id="index" >
+<div class="content" id="index">
     <!-- 
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js'></script>-->
@@ -219,7 +219,6 @@ export default {
     }
   },
   mounted() {
-       this.test()
          this.$socket.emit("online", true);
   },
   sockets: {
@@ -240,37 +239,7 @@ export default {
     }
   },
   methods: {
-    test(){
-      var test={
-        99999:{
-          map:'2081.39404296875ms',
-          forEach:'2132.431884765625ms',
-          for:'2007.6240234375ms',
-          filter:' 2109.139892578125ms'
-        },
-           10:{
-          map:'16.8759765625ms',
-          forEach:' 12.3818359375ms',
-          for:'13.8291015625ms',
-          filter:'13.673828125ms'
-        }
-        
-    }
-        var unm=10
-        let arr=[]
-        while(unm>0){
-         unm--;
-          arr.push(unm)
-        }
-        console.time()
-       arr.map(item=>{ console.log(item) }) //2081.39404296875ms
-        // arr.forEach(item=>{console.log(item)}) //default: 2132.431884765625ms
-        // for(var i=0;i<arr.length;i++){ //default: 2007.6240234375ms
-        //   console.log(arr[i])
-        // }
-        // arr.filter(item=>{console.log(item)}) //default: 2109.139892578125ms
-       console.timeEnd()
-    },
+
     socketMethod() {},
     innerInput(e) {
       if (e.code === "Enter") {
@@ -351,9 +320,10 @@ export default {
 @media screen and (max-width: 768px) {
 
     // 小屏幕
-    #index{
+    #index {
         padding: 0;
     }
+
     .content {
         .mainBox {
             width: 100% !important;
