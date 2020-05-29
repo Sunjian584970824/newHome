@@ -8,7 +8,7 @@ VueRouter.prototype.push = function push(location) {
 }
 
 var router = new VueRouter({
-    mode: 'history',
+    mode: 'hash',//history
     routes: [{
         path: '/',
         name: 'index',

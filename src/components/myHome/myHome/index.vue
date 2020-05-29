@@ -8,7 +8,10 @@
             <el-button type="text" @click="deletes(item)" style="color:#f56c6c">删除</el-button>
         </div>
         <div class='content'>
-            <span class="fontWeight"> 内容：</span> {{item.content}}
+            <span class="fontWeight"> 内容：</span>
+            <div class='contetnbox'>
+                <span></span> {{item.content}}
+            </div>
         </div>
     </div>
 </el-card>
@@ -93,7 +96,22 @@ export default {
                 .content {
                     padding: 10px 0;
                     border-bottom: 1px solid #EBEEF5;
-                    color: rgba(0, 0, 0, .6)
+                    color: rgba(0, 0, 0, .6);
+
+                    .contetnbox {
+                        max-height: 100px;
+                        overflow: hidden;
+                        padding-top: 10px;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 5;
+                        overflow: hidden;
+
+                        span {
+                            display: inline-block;
+                            width: 40px;
+                        }
+                    }
                 }
             }
         }
