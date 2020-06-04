@@ -191,13 +191,13 @@ router.post('/api/queryIndexList', async (req, res) => {
 router.post('/api/updateText', (req, res) => {
     if (!req.body.id) return handleError(err);
     let centerFile = new mongoose.model('centerFile')
-    centerFile.findById(req.body.id,(e,res)=>{
-      if(res){
-          res.content=req.body.content
-          res.title=req.body.title
-          res.save((err,s)=>{
+    centerFile.findById(req.body.id,(e,status)=>{
+      if(status){
+        status.content=req.body.content
+        status.title=req.body.title
+        status.save((err,s)=>{
             if (err) return handleError(err);
-            let data = respones(true, { raw }, '成功')
+            let data = respones(true, {  }, '成功')
             res.send(data)
           })
       }
