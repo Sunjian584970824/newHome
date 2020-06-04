@@ -162,9 +162,10 @@ export default {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(res => {
-                this.$refs.md.$img2Url(e, `${this.$locationUrls}${res.data}`);
+                console.log(res)
+                this.$refs.md.$img2Url(e, `${this.$locationUrls}${res.data.data}`);
                 if (!this.titleImage) {
-                    this.titleImage = `${this.$locationUrls}${res.data}`
+                    this.titleImage = `${this.$locationUrls}${res.data.data}`
                 }
             })
         },
