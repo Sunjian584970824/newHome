@@ -220,10 +220,18 @@ export default {
   },
   mounted() {
          this.$socket.emit("online", true);
+         this.sockets.listener.subscribe('online', (data) => {
+   this.socketMethod(data)
+  })
   },
   sockets: {
     online(data) {
-      let user = localStorage.getItem("user");
+      this.socketMethod(data)
+    }
+  },
+  methods: {
+    socketMethod(data) {
+          let user = localStorage.getItem("user");
       var token = localStorage.getItem("token");
       let NowUser;
       data.map(item => {
@@ -236,11 +244,7 @@ export default {
       } else {
       }
       this.message = data;
-    }
-  },
-  methods: {
-
-    socketMethod() {},
+    },
     innerInput(e) {
       if (e.code === "Enter") {
         this.submitSocket();

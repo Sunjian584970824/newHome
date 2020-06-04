@@ -5,7 +5,7 @@ import http from './assets/js/axios.js'
 import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
     debug: true,
-    connection: 'http://47.93.117.110:9000', //
+    connection: 'http://127.0.0.1:9000', //'http://47.93.117.110:9000'
 }))
 Vue.config.productionTip = false
 Vue.prototype.$goback = function() {

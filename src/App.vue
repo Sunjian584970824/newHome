@@ -101,12 +101,10 @@ export default {
             //     style = routeArray.includes(route) ? 'none' : height <= 768 ? 'flex' : 'none' // 如果当前页面 是suggest 则不显示底部footer否则显示
             //     _this.$refs.footer.style.display = style
         }
-      
         this.Screen()
     },
 
     methods: {
-    
         isSugesst() {
             console.log(this.$route.path)
             if (this.$route.path === '/') {

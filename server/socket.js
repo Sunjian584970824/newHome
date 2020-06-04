@@ -20,8 +20,11 @@ io.sockets.on('connection', socket => {
                 }
                 oSockets.push(data)
                 user.push(data)
-                io.emit('online', oSockets) //给所有连接用户广播
-                    // socket.emit('online', oSockets)//单独广播
+        console.log(oSockets)
+
+                // io.emit('online', oSockets) //给所有连接用户广播
+                // io.send('online', oSockets) //给所有连接用户广播
+                    socket.emit('online', oSockets)//单独广播
             }
 
         })
