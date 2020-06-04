@@ -20,7 +20,7 @@ export default {
     },
     created() {
         let user=localStorage.getItem('user')
-           this.sessionToken= user?JSON.parse(user):''
+           this.sessionToken= user?JSON.parse(user).token:''
     },
 }
 </script>
