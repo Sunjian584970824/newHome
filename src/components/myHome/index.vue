@@ -15,21 +15,24 @@ export default {
     },
     data() {
         return {
-           sessionToken:null
+            sessionToken: null
         }
     },
     created() {
-        let user=localStorage.getItem('user')
-           this.sessionToken= user?JSON.parse(user).token:''
+        let user = localStorage.getItem('user')
+        this.sessionToken = user ? JSON.parse(user).token : ''
+    },
+    methods: {
+      
     },
 }
 </script>
 
-<style lang="less" >
+<style lang="less">
 #myHome {
-    .myIcon{
-    width: 30px;
-    z-index: 22
+    .myIcon {
+        width: 30px;
+        z-index: 22
     }
 }
 </style>

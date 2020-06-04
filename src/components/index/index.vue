@@ -219,9 +219,12 @@ export default {
     }
   },
   mounted() {
+this.test([1,2,3,4])
+
          this.$socket.emit("online", true);
          this.sockets.listener.subscribe('online', (data) => {
    this.socketMethod(data)
+
   })
   },
   sockets: {
@@ -230,6 +233,20 @@ export default {
     }
   },
   methods: {
+        test(nums) {
+            var arr=[]
+               for(let i=0;i<nums.length;i++){
+                   let s=1
+                   for(let k=0;k<nums.length;k++){
+                       if(i!=k){
+                           s=s*nums[k]
+                       }
+               }
+               arr.push(s)
+               }
+
+            return arr
+        },
     socketMethod(data) {
           let user = localStorage.getItem("user");
       var token = localStorage.getItem("token");

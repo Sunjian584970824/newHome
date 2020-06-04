@@ -103,6 +103,9 @@ export default {
                     titleImage: this.titleImage
                 }
                 let url = this.$route.query.isEidet ? 'api/updateText' : 'api/centerFile';
+                if(this.$route.query.isEidet){
+                    obj.id=JSON.parse(sessionStorage.getItem('edidt'))._id
+                }
                 this.$axios({
                     url: url,
                     data: obj

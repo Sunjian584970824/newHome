@@ -189,6 +189,7 @@ router.post('/api/queryIndexList', async (req, res) => {
     })
 })
 router.post('/api/updateText', (req, res) => {
+    if (!req.body.id) return handleError(err);
     let centerFile = new mongoose.model('centerFile')
     centerFile.update({ id: req.body.id }, { content: req.body.content, title: req.body.title }, (err, raw) => {
 
